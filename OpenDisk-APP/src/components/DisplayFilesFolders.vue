@@ -1,0 +1,163 @@
+<template>
+
+ <v-container class="grid-container">
+  <v-card
+    class="grid-item"
+    variant="outlined"
+    color="indigo"
+    v-for="folder in folders" :key="folder.idDirectory"
+  >
+    <v-card-item >
+       <div class="text-overline mb-1">
+          Dossier
+        </div>
+        <div class="text-caption">{{folder.DirectoryName}}</div>
+    </v-card-item>
+
+    <v-card-actions>
+      <v-btn variant="outlined" @click="this.$router.push('/myFiles/' + folder.idDirectory)">
+        Ouvrir
+      </v-btn>
+    </v-card-actions>
+  </v-card>
+  <v-card
+
+  class="grid-item"
+    variant="outlined"
+    color="indigo"
+    v-for="file in files" :key="file.idFichier"
+  >
+    <v-card-item >
+       <div class="text-overline mb-1">
+          Fichier
+        </div>
+        <div class="text-caption">{{file.nomFichierOriginal}}</div>
+    </v-card-item>
+
+    <v-card-actions>
+      <v-btn variant="outlined" @click="downloadFiles(file.idFichier,file.nomFichierOriginal)">
+        Télécharger
+      </v-btn>
+    </v-card-actions>
+  </v-card>
+
+
+
+</v-container>
+
+
+</template>
+
+
+<script>
+
+  import UserUtils from '@/utils/UserFunc.js'
+export default{
+  data(){
+    return{
+      files: [],
+      folders: [],
+      originalfiles: [],
+      originalfolders: []
+    }
+  },
+  async created() {
+    await this.getContents();
+
+  },methods:{
+    async getContents(){
+    if(this.$route.params.id){
+        let content = await UserUtils.GetContentInDirectory(this.$route.params.id)
+        if(content){
+          this.files = content.files
+          this.folders = content.folder
+          this.originalfiles = this.files
+          this.originalfolders = this.folders
+          console.log(this.folders)
+        }
+      }else{
+        let content = await UserUtils.GetMainFolder()
+        if(content){
+          this.folders = content
+
+          this.files = []
+
+        }
+      }
+    },
+    async downloadFiles(idFichier, nomFichierOriginal) {
+    try {
+        const fileId = idFichier;
+        const fileName = nomFichierOriginal;
+        const authToken = sessionStorage.getItem('monToken');
+        const redirectUrl = `http://localhost:5000/Files/GetFile/${fileId}/${fileName}`;
+
+        const response = await fetch(redirectUrl, {
+            method: 'GET',
+            headers: {
+                'token': authToken
+            }
+        });
+
+        if (response.status === 200) {
+            const blob = await response.blob();
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.style.display = 'none';
+            a.href = url;
+            a.download = fileName;
+            document.body.appendChild(a);
+            a.click();
+            window.URL.revokeObjectURL(url);
+        }
+    } catch (error) {
+        console.error('Une erreur est survenue', error);
+    }
+}
+
+
+  },  watch: {
+    '$route.params.id'(newValue, oldValue) {
+      this.getContents();
+    },
+    'datatosearch'(n,o){
+
+        this.files = this.originalfiles;
+        this.folders = this.originalfolders;
+
+      this.files= this.files.filter((file)=>{ return file.nomFichierOriginal.includes(this.datatosearch) })
+      this.folders= this.folders.filter((folder)=>{ return folder.DirectoryName.includes(this.datatosearch)})
+    }
+
+  },props: ['datatosearch']
+
+}
+
+
+</script>
+
+<style>
+/* Styles CSS personnalisés */
+.grid-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); /* Colonnes dynamiques avec largeur minimale de 150px */
+  gap: 20px; /* Espacement entre les éléments */
+
+
+}
+
+
+
+/* Style des notes */
+.grid-item {
+  border: 1px solid #ccc;
+  padding: 15px;
+  background-color: #f5f5f5;
+}
+
+@media screen and (max-width: 1280px){
+  .grid-container {
+  padding-left: 17%;
+}
+}
+</style>
