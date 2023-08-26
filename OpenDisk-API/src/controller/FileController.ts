@@ -161,8 +161,8 @@ export class FileController{
       callback(new Error('Token invalide'));
     }
   };
-
-  static uploaddp = multer({ storage: FileController.storagedp, fileFilter: FileController.tokenFilterdp })
+  //TODO Verifier la taille du fichier directement dans le filtre, et la recadrer au format image  (avec sharp ????)
+  static uploaddp = multer({ storage: FileController.storagedp, limits:{fileSize:50 * 1024 * 1024}, fileFilter: FileController.tokenFilterdp })
 
 
 

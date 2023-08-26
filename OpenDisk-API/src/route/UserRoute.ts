@@ -68,9 +68,7 @@ RouteUtilisateur.post('/NouveauUtilisateur', async (req,res ) => {
 RouteUtilisateur.post('/connecter', async (req, res) => {
     const email:string = req.body.email;
     const password:string = createHash('sha256').update(req.body.mdp).digest('hex');
-
     var ResultData = await UserController.connect(email,password)
-
     res.status(ResultData.status).send(ResultData.toSend)
 })
 
