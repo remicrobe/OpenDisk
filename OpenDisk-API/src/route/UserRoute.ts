@@ -13,36 +13,25 @@ import { erreur } from "../utils/Utils";
 import { sendActivationMail } from "../mail-tools";
 import { UserController } from "../controller/UserController";
 
+import { ValidEmail, ValidPassword } from "../utils/Utils";
+
 const RouteUtilisateur = Router();
 
 
-RouteUtilisateur.get('/', async (req,res) =>{
+/*RouteUtilisateur.get('/', async (req,res) =>{
     const utilisateur = await AppDataSource.getRepository(Utilisateur).find()
-  
     res.status(200).send({"utilisateur": utilisateur.length})
-
-   
-})
+})*/
 
 RouteUtilisateur.post('/NouveauUtilisateur', async (req,res ) => {
     const email:string = req.body.email;
     const password:string = createHash('sha256').update(req.body.mdp).digest('hex');
-    if(email && password){
-        const VerifMail = await AppDataSource.getRepository(Utilisateur).findBy({"email": email});
-        if(VerifMail.length>0){
+    if(ValidEmail(email) && ValidPassword(password)){
+        const VerifMail = await UserController.UserWithMail(email)
+        if(VerifMail){
             res.status(500).send(erreur("Un utilisateur existe déja avec ce mail"))
         }else{
-
-            var NouvelleUtilisateur = new Utilisateur();
-            NouvelleUtilisateur.email = email;
-            NouvelleUtilisateur.password = password;
-            NouvelleUtilisateur.ActivationCode = randomUUID()
-
-
-
-            const NouveauUtilisateur = await AppDataSource.getRepository(Utilisateur).save(NouvelleUtilisateur);
-            await sendActivationMail(NouveauUtilisateur.ActivationCode,NouveauUtilisateur.email,NouveauUtilisateur.email)
-
+            let NouveauUtilisateur = await UserController.CreateUser(email,password)
             if(NouveauUtilisateur)
                 res.status(200).send({sucess:"Vous venez de recevoir un mail de confirmation sur : " + email });
             else
@@ -54,7 +43,7 @@ RouteUtilisateur.post('/NouveauUtilisateur', async (req,res ) => {
     }
 })
 
-RouteUtilisateur.post('/connecter', async (req, res) => {
+/*RouteUtilisateur.post('/connecter', async (req, res) => {
     const email:string = req.body.email;
     const password:string = createHash('sha256').update(req.body.mdp).digest('hex');
 
@@ -63,10 +52,8 @@ RouteUtilisateur.post('/connecter', async (req, res) => {
     if(UtilisateurConnecte && UtilisateurConnecte.Activated){
         UtilisateurConnecte.uuid = randomUUID()
         UtilisateurConnecte = await AppDataSource.getRepository(Utilisateur).save(UtilisateurConnecte);
-        delete UtilisateurConnecte.password;
-        delete UtilisateurConnecte.idUtilisateur;
-        delete UtilisateurConnecte.ActivationCode;
-        res.status(200).send(JSON.stringify(UtilisateurConnecte))
+        
+        res.status(200).send(JSON.stringify(UserController.DeleteSensitiveData(UtilisateurConnecte)))
     }else if(UtilisateurConnecte){
         UtilisateurConnecte.ActivationCode = randomUUID()
         let ActivationUser = await AppDataSource.getRepository(Utilisateur).save(UtilisateurConnecte);
@@ -76,16 +63,21 @@ RouteUtilisateur.post('/connecter', async (req, res) => {
     }else{
         res.status(404).send(erreur("L'utilisateur n'a pas été trouvée"))
     }
+})*/ // OLD VERSION
+
+RouteUtilisateur.post('/connecter', async (req, res) => {
+    const email:string = req.body.email;
+    const password:string = createHash('sha256').update(req.body.mdp).digest('hex');
+
+    var ResultData = await UserController.connect(email,password)
+
+    res.status(ResultData.status).send(ResultData.toSend)
 })
 
 RouteUtilisateur.post('/deconnecter', async (req, res) => {
     const token:string = req.body.token;
-
-    var UtilisateurConnecte = await AppDataSource.getRepository(Utilisateur).findOneBy({"uuid": token})
-
+    var UtilisateurConnecte = await UserController.DeconnectUser(token)
     if(UtilisateurConnecte){
-        UtilisateurConnecte.uuid = ""
-        UtilisateurConnecte = await AppDataSource.getRepository(Utilisateur).save(UtilisateurConnecte);
         res.status(200).send("Déconnecté !")
     }else{
         res.status(404).send(erreur("L'utilisateur n'a pas été trouvée"))
@@ -108,17 +100,9 @@ RouteUtilisateur.post('/ActivateAccount', async (req, res) => {
 RouteUtilisateur.post('/quisuisje', async (req, res) => {
     const token:string = req.body.token;
 
-    var UtilisateurConnecte = await AppDataSource.getRepository(Utilisateur).findOneBy({"uuid": token})
-
-
+    var UtilisateurConnecte = await UserController.GetUserFromToken(token)
     if(UtilisateurConnecte){
-
-      
-        delete UtilisateurConnecte.password;
-        delete UtilisateurConnecte.idUtilisateur;
-
-
-            res.status(200).send({Utilisateur: JSON.stringify(UtilisateurConnecte)})
+        res.status(200).send({Utilisateur: JSON.stringify(UserController.DeleteSensitiveData(UtilisateurConnecte))})
     }else{
         res.status(404).send(erreur("L'utilisateur n'a pas été trouvée"))
     }
