@@ -13,14 +13,14 @@
             :prepend-avatar="profilpic"
             title="Utilisateur"
             :subtitle="email"
-            @click="$refs.infoPopup.openPopup();"
+            @click="this.$refs.infoPopup.openPopup();"
 
           ></v-list-item>
 
         </v-list>
         <v-list density="compact" nav v-else>
-          <v-list-item prepend-icon="mdi-folder" title="Se connecter" value="connect" @click="$refs.loginPopup.openPopup();"></v-list-item>
-          <v-list-item prepend-icon="mdi-account-multiple" title="S'inscrire" value="inscrire" @click="$refs.registerpopup.openPopup();" ></v-list-item>
+          <v-list-item prepend-icon="mdi-folder" title="Se connecter" value="connect" @click="this.$refs.loginPopup.openPopup();"></v-list-item>
+          <v-list-item prepend-icon="mdi-account-multiple" title="S'inscrire" value="inscrire" @click="this.$refs.registerpopup.openPopup();" ></v-list-item>
         </v-list>
 
         <v-divider></v-divider>

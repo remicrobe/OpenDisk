@@ -12,6 +12,8 @@ import * as path from 'path'
 import config from './loadconfig'
 import { Activity } from './entity/Activity';
 import { UserController } from './controller/UserController';
+import { erreur } from './utils/Utils';
+import { sendMailError } from './mail-tools';
 
 
 class Index{ 
@@ -38,7 +40,8 @@ class Index{
                 let UserID = await UserController.GetUseriDFromToken(req.headers.token)
                 if(UserID) activity.UserID = UserID
              }
-             AppDataSource.getRepository(Activity).save(activity)
+             
+             req.body.activity = await AppDataSource.getRepository(Activity).save(activity)
 
             next();
             
@@ -50,7 +53,10 @@ class Index{
            res.status(404).send("Vous vous êtes perdu ?")
        }) 
     
-       
+       Index.app.use((err,req,res,next)=>{
+            res.status(500).send(erreur('Une erreur est survenue'));
+            sendMailError(err.stack,req.body.activity.idActivity)
+       })
          
     } 
  

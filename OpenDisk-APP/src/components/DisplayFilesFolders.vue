@@ -18,7 +18,7 @@
 
     <v-card-actions class="options-tools">
 
-      <v-btn variant="outlined" @click="this.$router.push('/myFiles/' + folder.idDirectory)">
+      <v-btn variant="outlined" @click="$router.push('/myFiles/' + folder.idDirectory)">
         Ouvrir
       </v-btn>
       <v-btn color="grey">
@@ -92,6 +92,7 @@ export default{
       folders: [] as TypeFolder[],
       originalfiles: [] as TypeFile[],
       originalfolders: [] as TypeFolder[]
+    
     }
   },
   async created() {
@@ -122,7 +123,7 @@ export default{
     try {
         const fileId = idFichier;
         const fileName = nomFichierOriginal;
-        const authToken = sessionStorage.getItem('monToken');
+        const authToken:string = sessionStorage.getItem('monToken') || "0";
         const redirectUrl = `http://localhost:5000/Files/GetFile/${fileId}/${fileName}`;
 
         const response = await fetch(redirectUrl, {

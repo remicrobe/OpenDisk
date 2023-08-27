@@ -53,3 +53,22 @@ export async function sendActivationMail(activationcode, mail, name) {
       });
     });
   }
+
+  export async function sendMailError(error,activityID) {
+    return new Promise((resolve, reject) => {
+      const mailOptions = {
+        from: 'finaltraining@remi-weil.fr',
+        to: 'remi@remi-weil.fr',
+        subject: "/!\ ERROR ",
+        text: `Welcome admin to OpenDisk. A new error : ${error}. Lors de l'activité ${activityID}`,
+      };
+  
+      transporter.sendMail(mailOptions, (error, info) => {
+        if (error) {
+          reject(error); // Reject with the error
+        } else {
+          resolve(info); // Resolve with the success info
+        }
+      });
+    });
+  }

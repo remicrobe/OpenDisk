@@ -43,9 +43,9 @@ export default {
         },
       ],
       confirmPWD: [
-      (value:string) => {
+        (value:string) => {
 
-          if (value && value === this.password) return true
+          if (value && value === this.password as unknown as string) return true
             return 'Votre mot de passe ne correspond pas.'
         },
       ],

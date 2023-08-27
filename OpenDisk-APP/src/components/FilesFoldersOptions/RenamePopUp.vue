@@ -34,7 +34,7 @@ export default {
       idtoedit: 0,
       nametoedit: '',
       newname: '',
-      popuptype: "error",
+      popuptype:  'error' as 'success' | 'error',
       notBlank: [
         (value:string) => {
           if (value) return true
