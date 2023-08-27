@@ -18,27 +18,37 @@ const FileRoute = Router()
 FileRoute.post('/UploadFile', (req,res) => {
 
     
-        FileController.upload.single('file')(req,res, async (err)=>{
-            if(err){
-                res.status(500).send("Une erreur est survenue " +err)
-            }else{
-                const userID = await UserController.GetUseriDFromToken(req.body.token)
-                if(userID){
-
-                    const myNewFile = new File
-                    myNewFile.nomFichierOriginal = req.file.originalname
-                    myNewFile.nomFichier = req.file.filename
-                    myNewFile.ownerID = userID
-                    myNewFile.directory = req.body.directoryid
-                    
-                    await AppDataSource.getRepository(File).save(myNewFile);
-                    
-                    res.send("Fichier envoyé avec succés")
+ 
+            FileController.upload.single('file')(req,res, async (err)=>{
+                if(err){
+                    res.status(500).send("Une erreur est survenue " +err)
                 }else{
-                    res.status(500).send("Une erreur est survenue")
+                    try {
+                        const userID = await UserController.GetUseriDFromToken(req.body.token)
+                        if(userID){
+                            
+                            const myNewFile = new File
+                            myNewFile.nomFichierOriginal = req.file.originalname
+                            myNewFile.nomFichier = req.file.filename
+                            myNewFile.ownerID = userID
+                            myNewFile.directory = req.body.directoryid
+                      
+                            await AppDataSource.getRepository(File).save(myNewFile); // TODO, Empécher les caracteres spéciaux faisant planter le programme 
+            
+                            
+                            res.send("Fichier envoyé avec succés")
+                        }else{
+                            res.status(500).send("Une erreur est survenue")
+                        }
+     
+                    } catch (err) {
+                        fs.unlink(path.resolve('src/uploads/' + req.file.filename), (err)=> {console.log(err)}) // Si on arrive dans le try catch on prends la précaution de supprimer le fichier potentiellement enregistré
+                        res.status(500).send(erreur("Une erreur est survenue"))
+                    }
+                    }
                 }
-            }
-        })        
+            )        
+
     
     
 })
@@ -214,6 +224,25 @@ FileRoute.post('/RemoveDirectory/', async (req,res) => {
     }
 })
 
+FileRoute.post('/RemoveFile/', async (req,res) => {
+    if(req.body.token && req.body.fileID){
+        let userid = await UserController.GetUseriDFromToken(req.body.token)
+        if(!userid){
+            res.status(500).send(erreur("Token invalide"))
+        }else{
+           
+            if(await FileController.deleteFile(req.body.fileID, req.body.token)){
+                res.status(200).send("ok")
+            }else{
+                res.status(500).send(erreur("Une erreur est survenue"))
+            }
+
+
+        }
+    }else{
+        res.status(500).send(erreur("Veuillez respecter les parametres"))
+    }
+})
 
 
 FileRoute.route('/').get((req,res) =>{

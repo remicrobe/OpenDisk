@@ -1,5 +1,6 @@
 import { AppDataSource } from "../data-source";
 import { Directory } from "../entity/Directory";
+import { FileController } from "./FileController";
 import { UserController } from "./UserController";
 
 
@@ -74,15 +75,32 @@ export class DirectoryController{
                
                 return false; // User is not the owner of the directory
             }
+            
 
-
- 
-            await AppDataSource.getRepository(Directory).remove(directory);
-            return true; // Directory deleted successfully
+            const result = await this.removeSubDirectory(directory)
+            //await AppDataSource.getRepository(Directory).remove(directory);
+            return result; // Directory deleted successfully
         } catch (err) {
           
             return false; // Error occurred during the deletion process
+        } 
+    }  
+
+    static async removeSubDirectory(directory:Directory){
+        try {
+            let subsdirectory = await AppDataSource.getRepository(Directory).findBy({SubDirectoryID:directory.idDirectory})
+            subsdirectory.forEach((subdirectory)=>{
+                FileController.RemoveFileInDirectory(subdirectory)
+                this.removeSubDirectory(subdirectory)
+                AppDataSource.getRepository(Directory).remove(subdirectory)
+            })
+            await FileController.RemoveFileInDirectory(directory)
+            AppDataSource.getRepository(Directory).remove(directory)
+            return true
+        } catch (err) {
+            return false
         }
+        
     }
 
 }

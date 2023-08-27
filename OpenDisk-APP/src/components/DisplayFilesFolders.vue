@@ -27,7 +27,7 @@
           <v-list>
             <v-list-item>
               <v-list-item-title @click="this.$refs.RenamePopUpVue.openPopup('dossier',folder.DirectoryName,folder.idDirectory)">Renommer</v-list-item-title>
-              <v-list-item-title >Supprimer</v-list-item-title>
+              <v-list-item-title @click="this.$refs.ConfirmDeletePopUpVue.openPopup('dossier',folder.DirectoryName,folder.idDirectory)">Supprimer</v-list-item-title>
             </v-list-item>
           </v-list>
         </v-menu>
@@ -59,7 +59,7 @@
           <v-list>
             <v-list-item>
               <v-list-item-title @click="this.$refs.RenamePopUpVue.openPopup('fichier',file.nomFichierOriginal,file.idFichier)">Renommer</v-list-item-title>
-              <v-list-item-title >Supprimer</v-list-item-title>
+              <v-list-item-title @click="this.$refs.ConfirmDeletePopUpVue.openPopup('fichier',file.nomFichierOriginal,file.idFichier)">Supprimer</v-list-item-title>
             </v-list-item>
           </v-list>
         </v-menu>
@@ -70,7 +70,7 @@
   </v-card>
 
   <RenamePopUpVue ref="RenamePopUpVue"></RenamePopUpVue>
-
+  <ConfirmDeletePopupVue ref="ConfirmDeletePopUpVue"></ConfirmDeletePopupVue>
 </v-container>
 
 
@@ -80,10 +80,11 @@
 <script lang="ts">
   import UserUtils,{TypeFile,TypeFolder} from '@/utils/UserFunc'
   import RenamePopUpVue from './FilesFoldersOptions/RenamePopUp.vue'
-import { File } from 'buffer'
+  import ConfirmDeletePopupVue from './FilesFoldersOptions/ConfirmDeletePopup.vue'
 export default{
   components: {
-    RenamePopUpVue
+    RenamePopUpVue,
+    ConfirmDeletePopupVue
   },
   data(){
     return{

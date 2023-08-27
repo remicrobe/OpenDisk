@@ -7,13 +7,34 @@ import { DirectoryController } from "./DirectoryController";
 import { UserController } from "./UserController";
 import { Directory } from "../entity/Directory";
 import { IsNull } from "typeorm";
+import * as fs from 'fs'
 
 export class FileController{
 
     static async getFile(){
         return await AppDataSource.getRepository(File).find()
     }
-    
+
+    static async RemoveFileInDirectory(directory:Directory){
+      const myFiles = await AppDataSource.getRepository(File).findBy({directory:directory})
+      myFiles.forEach(file => {
+        fs.unlink(path.resolve('src/uploads/' + file.nomFichier), (err)=> {console.log(err)})
+        AppDataSource.getRepository(File).remove(file)
+      });
+    }
+    static async deleteFile(fileID, token) {
+      try {
+        let myFile = await this.isFileToUser(fileID,token)
+        if(myFile){
+          await AppDataSource.getRepository(File).remove(myFile)
+          return true
+        }else{
+          return false
+        }
+      } catch (err) {
+        return false
+      }
+    }
 
     static async isFileToUser(fileID, token){
       

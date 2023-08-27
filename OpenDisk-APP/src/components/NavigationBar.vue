@@ -63,6 +63,8 @@
   import RegisterPopUp from '@/components/RegisterPopUp.vue'
   import UserInfoPopUp from '@/components/UserInfoPopUp.vue'
 
+
+
   interface Folder {
     idDirectory: number;
     DirectoryName: string;

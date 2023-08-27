@@ -199,6 +199,27 @@ static async DeleteFolder(subdirectory:number){
   }
 
 }
+
+static async DeleteFile(fileID:number){
+  const token = sessionStorage.getItem('monToken');
+  const response = await fetch("http://localhost:5000/Files/RemoveFile",{
+    method:"POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ token: token, fileID: fileID}),
+
+  })
+
+
+
+  if(response.ok){
+    return true
+  }else{
+    return false
+  }
+
+}
 static async RenameFolder(idFolder:number,newname:string){
   const token = sessionStorage.getItem('monToken');
   const response = await fetch("http://localhost:5000/Files/RenameFolder",{

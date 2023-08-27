@@ -10,6 +10,8 @@ import { RouteUtilisateur } from "./route/UserRoute"
 import * as path from 'path'
 
 import config from './loadconfig'
+import { Activity } from './entity/Activity';
+import { UserController } from './controller/UserController';
 
 
 class Index{ 
@@ -18,10 +20,30 @@ class Index{
     static router = express.Router()
     
     static config(){ 
-    
-        Index.app.use('/profilpicture',express.static(path.resolve('src/profilepic')))
+
+
         Index.app.use(cors())
         Index.app.use(express.json())
+        Index.app.use(async (req,res,next)=>{
+
+            const activity = new Activity()
+            
+             activity.IP = req.ip; // Récupère l'adresse IP
+             activity.Action = req.method
+             activity.Route = req.originalUrl;
+             if(req.body.token){
+                let UserID = await UserController.GetUseriDFromToken(req.body.token)
+                if(UserID) activity.UserID = UserID
+             }else if(req.headers.token){
+                let UserID = await UserController.GetUseriDFromToken(req.headers.token)
+                if(UserID) activity.UserID = UserID
+             }
+             AppDataSource.getRepository(Activity).save(activity)
+
+            next();
+            
+        })
+        Index.app.use('/profilpicture',express.static(path.resolve('src/profilepic')))
         Index.app.use('/User', RouteUtilisateur)
         Index.app.use('/Files', FileRoute)
         Index.app.use('*', (req, res)=>{
