@@ -178,11 +178,15 @@ export default{
 
 }
 .v-card .options-tools{
+  margin-bottom: 1;
   position: absolute;
   bottom: 0;
   right:0
 }
 
+.text-caption{
+  padding-bottom: 20%;
+}
 
 
 /* Style des notes */
