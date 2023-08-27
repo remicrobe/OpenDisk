@@ -9,6 +9,15 @@ export function erreur(detail:string) {
     return erreurJson;
 }
 
+export function sucess(detail:string) {
+    var sucessobj = {
+        sucess: detail
+    };
+
+    var sucessjson = JSON.stringify(sucessobj);
+    return sucessjson;
+}
+
 export function ValidEmail(email: string): boolean {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(email);

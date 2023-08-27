@@ -5,7 +5,7 @@ import { AppDataSource } from "../data-source";
 import { File } from "../entity/File";
 import * as path from "path"
 import { UserController } from "../controller/UserController";
-import { erreur } from "../utils/Utils";
+import { erreur, sucess } from "../utils/Utils";
 import { stringify } from "qs";
 import { Utilisateur } from "../entity/User";
 
@@ -141,6 +141,43 @@ FileRoute.get('/GetContentInDirectory/:iddirectory/', async (req,res) => {
     }
 })
 
+FileRoute.post('/RenameFile', async (req,res) =>{
+    const usertoken:string = req.body.token
+    const idfile:number = req.body.idfile
+    const newname:string = req.body.newname
+
+    if(usertoken && idfile && newname){
+        const Result = await FileController.RenameFile(idfile, usertoken, newname)
+        if(Result)
+            res.status(200).send(sucess('Votre fichier a bien été renommé'))
+        else
+            res.status(500).send(erreur('Une erreur est survenue'))
+    }else{
+        res.status(500).send(erreur('Votre requete semble incorrecte'))
+    }
+
+
+
+})
+
+FileRoute.post('/RenameFolder', async (req,res) =>{
+    const usertoken:string = req.body.token
+    const idfolder:number = req.body.idFolder
+    const newname:string = req.body.newname
+
+    if(usertoken && idfolder && newname){
+        const Result = await DirectoryController.RenameFolder(idfolder, usertoken, newname)
+        if(Result)
+            res.status(200).send(sucess('Votre dossier a bien été renommé'))
+        else
+            res.status(500).send(erreur('Une erreur est survenue'))
+    }else{
+        res.status(500).send(erreur('Votre requete semble incorrecte'))
+    }
+
+
+
+})
 
 
 FileRoute.get('/GetDirectory/', async (req,res) => {

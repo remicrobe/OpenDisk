@@ -198,6 +198,39 @@ static async DeleteFolder(subdirectory){
   }
 
 }
+static async RenameFolder(idFolder,newname){
+  const token = sessionStorage.getItem('monToken');
+  const response = await fetch("http://localhost:5000/Files/RenameFolder",{
+    method:"POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ token: token, idFolder: idFolder,newname:newname}),
+
+  })
+  if(response.ok){
+    return true
+  }else{
+    return false
+  }
+}
+
+static async RenameFile(idfile,newname){
+  const token = sessionStorage.getItem('monToken');
+  const response = await fetch("http://localhost:5000/Files/RenameFile",{
+    method:"POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ token: token, idfile: idfile,newname:newname}),
+
+  })
+  if(response.ok){
+    return true
+  }else{
+    return false
+  }
+}
  static async RecoveryLink(mail){
       const response = await fetch("http://localhost:5000/User/LienDeRecuperation",{
         method:"POST",

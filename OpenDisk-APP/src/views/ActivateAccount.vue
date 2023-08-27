@@ -1,5 +1,6 @@
 <template>
   <h1> {{msg}} </h1>
+  <HelloPage />
 </template>
 
 <script>
@@ -14,6 +15,7 @@ export default {
     }
   },
   async created() {
+    console.log('okk')
     let AccountActivated = await UserUtils.ActivateAccount(this.$route.params.activationcode)
     if(AccountActivated){
       this.msg = "Votre compte a été activé"

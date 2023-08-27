@@ -25,7 +25,7 @@ export class Utilisateur {
     @Column({ type: "text" }) 
     ActivationCode: string;
 
-    @Column({ type: "text" }) 
+    @Column({ type: "text",nullable:true,default:null }) 
     RecoveryCode: string;
 
     @Column({default:false})

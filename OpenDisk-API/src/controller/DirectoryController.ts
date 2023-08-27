@@ -5,14 +5,32 @@ import { UserController } from "./UserController";
 
 export class DirectoryController{
 
-    static async DirectoryOwner(UserID,DirectoryID):Promise<boolean>{
+    static async DirectoryOwner(UserID,DirectoryID){
         const myDirectory = await AppDataSource.getRepository(Directory).findOneBy({idDirectory:DirectoryID, ownerID: UserID})
         if(myDirectory){
-            return true
+            return myDirectory
         }else{
             return false
         }
     }
+
+
+  
+      static async RenameFolder(folderid, token, newname){
+        try {
+          const UserID = await UserController.GetUseriDFromToken(token)
+          const FolderToUser = await this.DirectoryOwner(UserID,folderid)
+    
+          if(FolderToUser){
+            FolderToUser.DirectoryName = newname
+            await AppDataSource.getRepository(Directory).save(FolderToUser)
+            return true
+          }
+          return false
+        } catch (err) {
+          return false
+        }
+      }
 
     static async CreateDirectory(subdirectoryid = 0, token, directoryname){
         try{

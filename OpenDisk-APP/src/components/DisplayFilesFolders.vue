@@ -1,5 +1,7 @@
 <template>
 
+
+
  <v-container class="grid-container">
   <v-card
     class="grid-item"
@@ -14,10 +16,22 @@
         <div class="text-caption">{{folder.DirectoryName}}</div>
     </v-card-item>
 
-    <v-card-actions>
+    <v-card-actions class="options-tools">
+
       <v-btn variant="outlined" @click="this.$router.push('/myFiles/' + folder.idDirectory)">
         Ouvrir
       </v-btn>
+      <v-btn color="grey">
+        ...
+        <v-menu activator="parent" location="start">
+          <v-list>
+            <v-list-item>
+              <v-list-item-title @click="this.$refs.RenamePopUpVue.openPopup('dossier',folder.DirectoryName,folder.idDirectory)">Renommer</v-list-item-title>
+              <v-list-item-title >Supprimer</v-list-item-title>
+            </v-list-item>
+          </v-list>
+        </v-menu>
+    </v-btn>
     </v-card-actions>
   </v-card>
   <v-card
@@ -27,6 +41,7 @@
     color="indigo"
     v-for="file in files" :key="file.idFichier"
   >
+
     <v-card-item >
        <div class="text-overline mb-1">
           Fichier
@@ -34,14 +49,27 @@
         <div class="text-caption">{{file.nomFichierOriginal}}</div>
     </v-card-item>
 
-    <v-card-actions>
+    <v-card-actions class="options-tools">
       <v-btn variant="outlined" @click="downloadFiles(file.idFichier,file.nomFichierOriginal)">
-        Télécharger
+        OUVRIR
       </v-btn>
+      <v-btn color="grey">
+        ...
+        <v-menu activator="parent" location="start">
+          <v-list>
+            <v-list-item>
+              <v-list-item-title @click="this.$refs.RenamePopUpVue.openPopup('fichier',file.nomFichierOriginal,file.idFichier)">Renommer</v-list-item-title>
+              <v-list-item-title >Supprimer</v-list-item-title>
+            </v-list-item>
+          </v-list>
+        </v-menu>
+    </v-btn>
+
     </v-card-actions>
+
   </v-card>
 
-
+  <RenamePopUpVue ref="RenamePopUpVue"></RenamePopUpVue>
 
 </v-container>
 
@@ -50,9 +78,12 @@
 
 
 <script>
-
   import UserUtils from '@/utils/UserFunc.js'
+  import RenamePopUpVue from './FilesFoldersOptions/RenamePopUp.vue'
 export default{
+  components: {
+    RenamePopUpVue
+  },
   data(){
     return{
       files: [],
@@ -142,8 +173,14 @@ export default{
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); /* Colonnes dynamiques avec largeur minimale de 150px */
   gap: 20px; /* Espacement entre les éléments */
+  grid-auto-rows: 1fr /* Force tout les élements a la m^ taille */
 
 
+}
+.v-card .options-tools{
+  position: absolute;
+  bottom: 0;
+  right:0
 }
 
 
@@ -153,6 +190,7 @@ export default{
   border: 1px solid #ccc;
   padding: 15px;
   background-color: #f5f5f5;
+
 }
 
 @media screen and (max-width: 1280px){

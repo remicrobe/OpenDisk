@@ -24,11 +24,25 @@ export class FileController{
 
       const myFile = await AppDataSource.getRepository(File).findOneBy({idFichier:fileID, ownerID:UserID})
       
-      if(myFile) return true
+      if(myFile) return myFile
       else return false
 
 
+    }
 
+    static async RenameFile(fileid, token, newname){
+      try {
+        const FileToUser = await this.isFileToUser(fileid,token)
+  
+        if(FileToUser){
+          FileToUser.nomFichierOriginal = newname
+          await AppDataSource.getRepository(File).save(FileToUser)
+          return true
+        }
+        return false
+      } catch (err) {
+        return false
+      }
     }
 
     static async FilesInDirectory(folderID, token){
