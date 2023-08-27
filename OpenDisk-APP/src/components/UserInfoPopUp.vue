@@ -17,9 +17,9 @@
   </v-dialog>
 </template>
 
-<script>
+<script lang="ts">
 
-  import UserUtils from '@/utils/UserFunc.js'
+  import UserUtils from '@/utils/UserFunc'
 export default {
 
   data() {
@@ -28,12 +28,12 @@ export default {
       loading: false,
       mail: '',
       info: '',
-      sucess: '',
-      selectedFile: '',
+      sucess: 'success' as 'success' | 'error',
+      selectedFile: undefined,
       password: '',
       popuptype: "error",
       notBlank: [
-        value => {
+        (value:string) => {
           if (value) return true
 
           return 'Veuillez entrer votre mot de passe.'
@@ -43,16 +43,17 @@ export default {
   },
   methods: {
     async sauvegarder(){
-      console.log(this.selectedFile[0])
-      let result = await UserUtils.ChangePDP(this.selectedFile[0])
-      if(result){
-        this.$emit('reload-parent');
-        this.info = "Votre modification a bien été prise en compte"
-        this.sucess = "success"
-      }else{
-        this.info = "Une erreur est survenue"
-        this.sucess = "error"
-      }
+      if(this.selectedFile){
+        let result = await UserUtils.ChangePDP(this.selectedFile[0])
+        if(result){
+          this.$emit('reload-parent');
+          this.info = "Votre modification a bien été prise en compte"
+          this.sucess = "success"
+        }else{
+          this.info = "Une erreur est survenue"
+          this.sucess = "error"
+        }
+    }
     },
     disconnect(){
       UserUtils.disconnect()

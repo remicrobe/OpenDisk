@@ -77,19 +77,20 @@
 </template>
 
 
-<script>
-  import UserUtils from '@/utils/UserFunc.js'
+<script lang="ts">
+  import UserUtils,{TypeFile,TypeFolder} from '@/utils/UserFunc'
   import RenamePopUpVue from './FilesFoldersOptions/RenamePopUp.vue'
+import { File } from 'buffer'
 export default{
   components: {
     RenamePopUpVue
   },
   data(){
     return{
-      files: [],
-      folders: [],
-      originalfiles: [],
-      originalfolders: []
+      files: [] as TypeFile[],
+      folders: [] as TypeFolder[],
+      originalfiles: [] as TypeFile[],
+      originalfolders: [] as TypeFolder[]
     }
   },
   async created() {
@@ -98,7 +99,7 @@ export default{
   },methods:{
     async getContents(){
     if(this.$route.params.id){
-        let content = await UserUtils.GetContentInDirectory(this.$route.params.id)
+        let content = await UserUtils.GetContentInDirectory(parseInt(this.$route.params.id as string))
         if(content){
           this.files = content.files
           this.folders = content.folder
@@ -111,12 +112,12 @@ export default{
         if(content){
           this.folders = content
 
-          this.files = []
+          this.files = [] as TypeFile[]
 
         }
       }
     },
-    async downloadFiles(idFichier, nomFichierOriginal) {
+    async downloadFiles(idFichier:number, nomFichierOriginal:string) {
     try {
         const fileId = idFichier;
         const fileName = nomFichierOriginal;
@@ -156,8 +157,8 @@ export default{
         this.files = this.originalfiles;
         this.folders = this.originalfolders;
 
-      this.files= this.files.filter((file)=>{ return file.nomFichierOriginal.includes(this.datatosearch) })
-      this.folders= this.folders.filter((folder)=>{ return folder.DirectoryName.includes(this.datatosearch)})
+      this.files= this.files.filter((file:TypeFile)=>{ return file.nomFichierOriginal.includes(this.datatosearch) })
+      this.folders= this.folders.filter((folder:TypeFolder)=>{ return folder.DirectoryName.includes(this.datatosearch)})
     }
 
   },props: ['datatosearch']

@@ -7,7 +7,7 @@
         <v-divider></v-divider>
         <v-divider></v-divider>
         <v-divider></v-divider>
-        <v-form @submit.prevent fast-fail=true>
+        <v-form @submit.prevent :fast-fail=true>
           <v-text-field label="Nouveau nom" :rules="notBlank" :loading="loading" v-model="newname" variant="outlined" required></v-text-field>
           <v-btn type="submit" :loading="loading" block class="mt-2" @click="rename">Renommer</v-btn>
       </v-form>
@@ -19,9 +19,9 @@
   </v-dialog>
 </template>
 
-<script>
+<script lang="ts">
 
-  import UserUtils from '@/utils/UserFunc.js'
+  import UserUtils from '@/utils/UserFunc'
 export default {
 
   data() {
@@ -31,12 +31,12 @@ export default {
       mail: '',
       error: '',
       type: '',
-      idtoedit: '',
+      idtoedit: 0,
       nametoedit: '',
       newname: '',
       popuptype: "error",
       notBlank: [
-        value => {
+        (value:string) => {
           if (value) return true
 
           return 'Veuillez entrer un nouveau nom.'
@@ -45,7 +45,7 @@ export default {
     };
   },
   methods: {
-    openPopup(type, nom, id) {
+    openPopup(type:string, nom:string, id:number) {
 
       this.type = type
       this.idtoedit = id

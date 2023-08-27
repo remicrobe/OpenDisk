@@ -16,9 +16,9 @@
   </v-dialog>
 </template>
 
-<script>
+<script lang="ts">
 
-  import UserUtils from '@/utils/UserFunc.js'
+  import UserUtils from '@/utils/UserFunc'
 export default {
 
   data() {
@@ -26,10 +26,10 @@ export default {
       showPopup: false,
       loading: false,
       info: '',
-      sucess: '',
-      selectedFile: '',
+      sucess:  'success' as 'success' | 'error',
+      selectedFile: undefined,
       notBlank: [
-        value => {
+        (value:string) => {
           if (value) return true
 
           return 'Ne peut être vide.'
@@ -44,18 +44,19 @@ export default {
     closePopup() {
       this.showPopup = false;
     },async importer(){
-      console.log(this.selectedFile[0])
-      let result = await UserUtils.UploadFiles(this.$route.params.id, this.selectedFile[0])
-      if(result){
-        this.$emit('reload-parent');
-        this.info = "Votre fichier a bien été importé !"
-        this.sucess = "success"
-        this.$router.go()
-      }else{
-        this.info = "Une erreur est survenue"
-        this.sucess = "error"
+      if(this.selectedFile){
+        let result = await UserUtils.UploadFiles(parseInt(this.$route.params.id as string), this.selectedFile[0])
+        if(result){
+          this.$emit('reload-parent');
+          this.info = "Votre fichier a bien été importé !"
+          this.sucess = "success"
+          this.$router.go(0)
+        }else{
+          this.info = "Une erreur est survenue"
+          this.sucess = "error"
+        }
       }
-    }
+  }
   },
 };
 </script>

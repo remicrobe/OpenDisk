@@ -9,8 +9,7 @@
 
 </template>
 
-<script setup>
-  import UserUtils from '@/utils/UserFunc.js'
+<script setup lang="ts">
   import NavBar from '@/components/NavigationBar.vue'
   import OptionsBar from '@/components/OptionsBar.vue'
   import HelloPage from '@/components/HelloPage.vue'
@@ -19,7 +18,7 @@
 
 </script>
 
-<script>
+<script lang="ts">
  export default {
     data(){
       return{
@@ -27,7 +26,7 @@
       };
     },
     methods:{
-      search(value){
+      search(value:string){
         console.log(value)
         this.toSearch = value
       }

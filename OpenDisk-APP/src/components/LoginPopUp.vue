@@ -7,7 +7,7 @@
         <v-divider></v-divider>
         <v-divider></v-divider>
         <v-divider></v-divider>
-        <v-form @submit.prevent fast-fail="true">
+        <v-form @submit.prevent :fast-fail=true>
           <v-text-field label="E-mail" :loading="loading" :rules="emailRules" v-model="mail" variant="outlined" required></v-text-field>
           <v-text-field label="Mot de passe" :rules="notBlank" :loading="loading" v-model="password" type="password" variant="outlined" required></v-text-field>
           <v-btn type="submit" :loading="loading" block class="mt-2" @click="login">Se connecter</v-btn>
@@ -21,9 +21,9 @@
   </v-dialog>
 </template>
 
-<script>
+<script lang="ts">
 
-  import UserUtils from '@/utils/UserFunc.js'
+  import UserUtils from '@/utils/UserFunc'
 export default {
 
   data() {
@@ -33,21 +33,21 @@ export default {
       mail: '',
       error: '',
       password: '',
-      popuptype: "error",
+      popuptype:  'error' as 'success' | 'error',
       notBlank: [
-        value => {
+      (value:string) => {
           if (value) return true
 
           return 'Veuillez entrer votre mot de passe.'
         },
       ],
       emailRules: [
-        value => {
+      (value:string) => {
           if (value) return true
 
           return 'Saisissez un mail ..'
         },
-        value => {
+        (value:string) => {
           if (/.+@.+\..+/.test(value)) return true
 
           return 'Saisissez un mail valide ..'

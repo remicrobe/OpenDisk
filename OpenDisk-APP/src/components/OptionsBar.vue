@@ -28,8 +28,8 @@
         <v-list>
           <v-list-item
           >
-            <v-list-item-title @click="$refs.filespopup.openPopup()" v-if="this.$route.params.id">Importer un fichier</v-list-item-title>
-            <v-list-item-title @click="$refs.folderpopup.openPopup" >Nouveau dossier</v-list-item-title>
+            <v-list-item-title @click="$refs.filespopup.openPopup()" v-if="$route.params.id">Importer un fichier</v-list-item-title>
+            <v-list-item-title @click="$refs.folderpopup.openPopup()" >Nouveau dossier</v-list-item-title>
           </v-list-item>
         </v-list>
       </v-menu>
@@ -42,7 +42,7 @@
 
 </template>
 
-<script>
+<script lang="ts">
 import NewFiles from '@/components/NewFiles.vue'
 import NewFolderPopUp from '@/components/NewFolderPopUp.vue'
 export default {

@@ -21,9 +21,9 @@
   </v-dialog>
 </template>
 
-<script>
+<script lang="ts">
 
-  import UserUtils from '@/utils/UserFunc.js'
+  import UserUtils from '@/utils/UserFunc'
 export default {
 
   data() {
@@ -34,29 +34,29 @@ export default {
       error: '',
       password: '',
       confirmpassword: '',
-      popuptype: "error",
+      popuptype: 'success' as 'success' | 'error',
       validButton: true,
       notBlank: [
-        value => {
+        (value:string) => {
           if (value) return true
 
           return 'Veuillez entrer votre mot de passe.'
         },
       ],
       confirmPWD: [
-        value => {
+        (value:string) => {
 
-          if (value && value === this.password) return true
+          if (value && value === this.password as unknown as string) return true
             return 'Votre mot de passe ne correspond pas.'
         },
       ],
       emailRules: [
-        value => {
+      (value:string) => {
           if (value) return true
 
           return 'Saisissez un mail ..'
         },
-        value => {
+        (value:string) => {
           if (/.+@.+\..+/.test(value)) return true
 
           return 'Saisissez un mail valide ..'

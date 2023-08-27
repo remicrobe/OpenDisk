@@ -7,7 +7,7 @@
         <v-divider></v-divider>
         <v-divider></v-divider>
         <v-divider></v-divider>
-        <v-form @submit.prevent fast-fail=true>
+        <v-form @submit.prevent :fast-fail=true>
           <v-text-field label="Mot de passe" :rules="notBlank" :loading="loading" v-model="password" type="password" variant="outlined" required></v-text-field>
           <v-text-field label="Confirmation du mot de passe" :rules="confirmPWD" :loading="loading" v-model="confirmpassword" type="password" variant="outlined" required></v-text-field>
           <v-btn type="submit" :disabled="!validButton" :loading="loading" block class="mt-2" @click="setNewPassword">Valider</v-btn>
@@ -20,9 +20,9 @@
   </v-dialog>
 </template>
 
-<script>
+<script lang="ts">
 
-  import UserUtils from '@/utils/UserFunc.js'
+  import UserUtils from '@/utils/UserFunc'
 export default {
 
   data() {
@@ -33,17 +33,17 @@ export default {
       error: '',
       password: '',
       confirmpassword: '',
-      popuptype: "error",
+      popuptype:  'success' as 'success' | 'error',
       validButton: true,
       notBlank: [
-        value => {
+        (value:string) => {
           if (value) return true
 
           return 'Veuillez entrer votre mot de passe.'
         },
       ],
       confirmPWD: [
-        value => {
+      (value:string) => {
 
           if (value && value === this.password) return true
             return 'Votre mot de passe ne correspond pas.'
@@ -57,7 +57,7 @@ export default {
     },
     async setNewPassword(){
       this.loading = true
-      let Response = await UserUtils.RecoverPassword(this.$route.params.recoverycode,this.confirmpassword)
+      let Response = await UserUtils.RecoverPassword(this.$route.params.recoverycode as string,this.confirmpassword)
       console.log(Response)
       if(Response.sucess){
         this.popuptype = "success"

@@ -16,9 +16,9 @@
   </v-dialog>
 </template>
 
-<script>
+<script lang="ts">
 
-  import UserUtils from '@/utils/UserFunc.js'
+  import UserUtils from '@/utils/UserFunc'
 export default {
 
   data() {
@@ -26,10 +26,10 @@ export default {
       showPopup: false,
       loading: false,
       info: '',
-      sucess: '',
+      sucess:  'success' as 'success' | 'error',
       folderName: '',
       notBlank: [
-        value => {
+      (value:string) => {
           if (value) return true
 
           return 'Ne peut être vide.'
@@ -45,11 +45,11 @@ export default {
       this.showPopup = false;
     },
     async createFolder(){
-      let FolderCreated = await UserUtils.CreateFolder(this.$route.params.id || 'aa',this.folderName)
+      let FolderCreated = await UserUtils.CreateFolder(parseInt(this.$route.params.id as string),this.folderName)
       if(FolderCreated){
         this.sucess = "success"
         this.info = "Votre dossier a bien été créé"
-        this.$router.go()
+        this.$router.go(0)
       }
     }
   },

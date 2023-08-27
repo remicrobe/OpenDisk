@@ -32,7 +32,7 @@ export default class UserUtils{
     }
   }
 
-  static async GetContentInDirectory(directory){
+  static async GetContentInDirectory(directory:number){
     const token = sessionStorage.getItem('monToken');
     console.log(token)
     if(token){
@@ -76,7 +76,7 @@ export default class UserUtils{
     }else return false
   }
 
-  static async ChangePDP(file) {
+  static async ChangePDP(file:File) {
     const token = sessionStorage.getItem('monToken');
 
     if (token) {
@@ -107,13 +107,14 @@ export default class UserUtils{
 
 
 
-  static async UploadFiles(directoryid,file) {
+
+  static async UploadFiles(directoryid:number,file:File) {
     const token = sessionStorage.getItem('monToken');
 
     if (token) {
       const formData = new FormData();
       formData.append('token', token);
-      formData.append('directoryid', directoryid)
+      formData.append('directoryid', directoryid.toString())
       formData.append('file', file);
 
       try {
@@ -137,7 +138,7 @@ export default class UserUtils{
     }
   }
 
-  static async CreateFolder(subdirectory,name){
+  static async CreateFolder(subdirectory:number,name:string){
     const token = sessionStorage.getItem('monToken');
     const response = await fetch("http://localhost:5000/Files/NewDirectory",{
       method:"POST",
@@ -158,7 +159,7 @@ export default class UserUtils{
 
 }
 
-static async ActivateAccount(activationcode){
+static async ActivateAccount(activationcode:string){
   const response = await fetch("http://localhost:5000/User/ActivateAccount",{
     method:"POST",
     headers: {
@@ -178,7 +179,7 @@ static async ActivateAccount(activationcode){
 
 }
 
-static async DeleteFolder(subdirectory){
+static async DeleteFolder(subdirectory:number){
   const token = sessionStorage.getItem('monToken');
   const response = await fetch("http://localhost:5000/Files/RemoveDirectory",{
     method:"POST",
@@ -198,7 +199,7 @@ static async DeleteFolder(subdirectory){
   }
 
 }
-static async RenameFolder(idFolder,newname){
+static async RenameFolder(idFolder:number,newname:string){
   const token = sessionStorage.getItem('monToken');
   const response = await fetch("http://localhost:5000/Files/RenameFolder",{
     method:"POST",
@@ -215,7 +216,7 @@ static async RenameFolder(idFolder,newname){
   }
 }
 
-static async RenameFile(idfile,newname){
+static async RenameFile(idfile:number,newname:string){
   const token = sessionStorage.getItem('monToken');
   const response = await fetch("http://localhost:5000/Files/RenameFile",{
     method:"POST",
@@ -231,7 +232,7 @@ static async RenameFile(idfile,newname){
     return false
   }
 }
- static async RecoveryLink(mail){
+ static async RecoveryLink(mail:string){
       const response = await fetch("http://localhost:5000/User/LienDeRecuperation",{
         method:"POST",
         headers: {
@@ -251,7 +252,7 @@ static async RenameFile(idfile,newname){
 
   }
 
-  static async RecoverPassword(RecoveryCode, password){
+  static async RecoverPassword(RecoveryCode:string, password:string){
     const response = await fetch("http://localhost:5000/User/EditPassword",{
       method:"POST",
       headers: {
@@ -274,7 +275,7 @@ static async RenameFile(idfile,newname){
 
 
 
-  static async Login(mail,password){
+  static async Login(mail:string,password:string){
       const response = await fetch("http://localhost:5000/User/connecter",{
         method:"POST",
         headers: {
@@ -296,7 +297,7 @@ static async RenameFile(idfile,newname){
 
   }
 
-  static async Register(mail,password){
+  static async Register(mail:string,password:string){
     const response = await fetch("http://localhost:5000/User/NouveauUtilisateur",{
       method:"POST",
       headers: {
@@ -321,3 +322,14 @@ static async RenameFile(idfile,newname){
 }
 
 
+export interface TypeFolder {
+  idDirectory: number;
+  DirectoryName: string;
+  SubDirectoryID:number
+}
+export interface TypeFile {
+  idFichier: number;
+  nomFichier: string;
+  nomFichierOriginal:string
+  IdDirectory:string
+}
