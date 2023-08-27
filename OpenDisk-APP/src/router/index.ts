@@ -19,7 +19,7 @@ const routes = [
   },
   {
     path: '/recovery/:recoverycode',
-    name: 'ActivateAccount',
+    name: 'RecoverAccount',
     component: () => import(/* webpackChunkName: "about" */ '../views/RecoverAccount.vue')
   },
 
