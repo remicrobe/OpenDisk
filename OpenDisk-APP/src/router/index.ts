@@ -17,6 +17,11 @@ const routes = [
     name: 'ActivateAccount',
     component: () => import(/* webpackChunkName: "about" */ '../views/ActivateAccount.vue')
   },
+  {
+    path: '/recovery/:recoverycode',
+    name: 'ActivateAccount',
+    component: () => import(/* webpackChunkName: "about" */ '../views/RecoverAccount.vue')
+  },
 
 
 ]

@@ -1,7 +1,7 @@
 import { randomUUID } from "crypto";
 import { AppDataSource } from "../data-source";
 import { Utilisateur } from "../entity/User";
-import { sendActivationMail } from "../mail-tools";
+import { sendActivationMail, sendRecoveryMail } from "../mail-tools";
 import { erreur } from "../utils/Utils";
 
 
@@ -74,6 +74,42 @@ export class UserController{
         }
 
 
+    }
+
+    static async SendRecoveryMail(user:Utilisateur){
+        try {
+            user.RecoveryCode = randomUUID()
+            await AppDataSource.getRepository(Utilisateur).save(user)
+            await sendRecoveryMail(user.RecoveryCode,user.email,user.email)
+            return true
+        } catch (err) {
+            return false
+        }
+    }
+
+    static async SetNewPassword(recoverycode, newpassword){
+        try {
+            let CheckedUser = await this.CheckRecoveryCode(recoverycode)
+            if(CheckedUser){
+                CheckedUser.password = newpassword
+                CheckedUser.RecoveryCode = ''
+                await AppDataSource.getRepository(Utilisateur).save(CheckedUser)
+                return {toSend:{sucess:'Mot de passe modifié'},status:200}
+            }else{
+                return {toSend:erreur('Recovery code non valide'),status:404}
+            }
+        } catch (err) {
+            return {toSend:erreur('Une erreur est survenue'),status:500}
+        }
+    }
+
+    static async CheckRecoveryCode(recoverycode){
+        let CheckedUser = await AppDataSource.getRepository(Utilisateur).findOneBy({RecoveryCode:recoverycode})
+        if(CheckedUser){
+            return CheckedUser
+        }else{
+            return false
+        }
     }
 
     static async CreateUser(mail,password){

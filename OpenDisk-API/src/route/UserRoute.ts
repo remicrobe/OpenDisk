@@ -43,6 +43,35 @@ RouteUtilisateur.post('/NouveauUtilisateur', async (req,res ) => {
     }
 })
 
+RouteUtilisateur.post('/LienDeRecuperation', async (req,res)=>{
+    const email:string = req.body.email;
+    if(ValidEmail(email)){
+        const VerifMail = await UserController.UserWithMail(email)
+        if(!VerifMail){
+            res.status(404).send(erreur("Utilisateur non trouvé"))
+        }else{
+            let RecoveryMail = await UserController.SendRecoveryMail(VerifMail)
+            if(RecoveryMail)
+                res.status(200).send({sucess:"Vous venez de recevoir un mail de récupération sur : " + email });
+            else
+                res.status(500).send(erreur('Une erreur est survenue'))
+        }
+    }else{
+        res.status(500).send(erreur("Données invalide"))
+    }
+
+
+})
+
+RouteUtilisateur.post('/EditPassword', async (req,res)=>{
+    const RecoveryCode:string = req.body.RecoveryCode;
+    const NewPassword:string = createHash('sha256').update(req.body.password).digest('hex');
+    let ResultData = await UserController.SetNewPassword(RecoveryCode,NewPassword)
+    res.status(ResultData.status).send(ResultData.toSend)
+})
+
+
+
 /*RouteUtilisateur.post('/connecter', async (req, res) => {
     const email:string = req.body.email;
     const password:string = createHash('sha256').update(req.body.mdp).digest('hex');

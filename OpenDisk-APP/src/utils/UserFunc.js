@@ -198,7 +198,45 @@ static async DeleteFolder(subdirectory){
   }
 
 }
+ static async RecoveryLink(mail){
+      const response = await fetch("http://localhost:5000/User/LienDeRecuperation",{
+        method:"POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email: mail }),
 
+      })
+
+      const result = await response.json()
+
+      if(response.ok){
+        return {sucess:result}
+      }else{
+        return {erreur:result}
+      }
+
+  }
+
+  static async RecoverPassword(RecoveryCode, password){
+    const response = await fetch("http://localhost:5000/User/EditPassword",{
+      method:"POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ RecoveryCode: RecoveryCode, password: password}),
+
+    })
+
+    const result = await response.json()
+
+    if(response.ok){
+      return {sucess:result}
+    }else{
+      return {erreur:result}
+    }
+
+}
 
 
 

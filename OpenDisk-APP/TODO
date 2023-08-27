@@ -2,3 +2,6 @@
 // Ajouter la possibilité de changer le mot de passe
 // Ajouter la possibilité de renommer / pré-voir / supprimer les fichiers
 // Ajouter la possibilité de collaborer sur des dossiers 
+// Ajouter une tempo sur les notifications qui ne disparaissent jamais 
+// Ajouter un middleware pour bloquer les actions répétitives pour la même IP
+// Ajouter un délai de validité sur les liens de récupérations de mot de passe

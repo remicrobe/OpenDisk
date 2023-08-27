@@ -33,3 +33,23 @@ export async function sendActivationMail(activationcode, mail, name) {
       });
     });
   }
+
+  export async function sendRecoveryMail(recovery, mail, name) {
+    return new Promise((resolve, reject) => {
+      const activationLink = 'http://localhost:3000/recovery/' + recovery; // Replace with your actual activation URL
+      const mailOptions = {
+        from: 'finaltraining@remi-weil.fr',
+        to: mail,
+        subject: 'Your recovery link',
+        text: `Welcome ${name} to OpenDisk. You ask to receive a link to recovery your password : ${activationLink}`,
+      };
+  
+      transporter.sendMail(mailOptions, (error, info) => {
+        if (error) {
+          reject(error); // Reject with the error
+        } else {
+          resolve(info); // Resolve with the success info
+        }
+      });
+    });
+  }

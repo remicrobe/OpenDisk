@@ -22,8 +22,11 @@ export class Utilisateur {
     @Column({ type: "text", nullable: true }) // Spécifie que contenuNote est de type texte en MySQL
     uuid: string; 
 
-    @Column({ type: "text" }) // Spécifie que contenuNote est de type texte en MySQL
+    @Column({ type: "text" }) 
     ActivationCode: string;
+
+    @Column({ type: "text" }) 
+    RecoveryCode: string;
 
     @Column({default:false})
     Activated: boolean;

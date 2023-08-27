@@ -7,13 +7,14 @@
         <v-divider></v-divider>
         <v-divider></v-divider>
         <v-divider></v-divider>
-        <v-form @submit.prevent>
+        <v-form @submit.prevent fast-fail="true">
           <v-text-field label="E-mail" :loading="loading" :rules="emailRules" v-model="mail" variant="outlined" required></v-text-field>
           <v-text-field label="Mot de passe" :rules="notBlank" :loading="loading" v-model="password" type="password" variant="outlined" required></v-text-field>
           <v-btn type="submit" :loading="loading" block class="mt-2" @click="login">Se connecter</v-btn>
       </v-form>
       </v-card-text>
       <v-card-actions>
+        <v-btn color="primary" @click="RecoveryLink">Mot de passe oublié</v-btn>
         <v-btn color="primary" @click="closePopup">Fermer</v-btn>
       </v-card-actions>
     </v-card>
@@ -78,7 +79,33 @@ export default {
       }
       this.loading = false;
 
+    },
+    async RecoveryLink(){
+      if(this.mail){
+        this.loading = true
+        let Recovery = await UserUtils.RecoveryLink(this.mail)
+        if(Recovery.sucess){
+          this.popuptype = "success"
+          this.error = Recovery.sucess.sucess
+          this.loading = false
+        }else if(Recovery.erreur){
+          this.popuptype = "error"
+          this.error = Recovery.erreur.erreur
+          this.loading = false
+        }
+      }else{
+        this.popuptype = "error"
+          this.error = "Veuillez entrer un mail"
+
+      }
     }
   },
+  watch: {
+    'error'(newValue){
+      setTimeout(()=>{
+        this.error = ''
+      },3000)
+    }
+  }
 };
 </script>

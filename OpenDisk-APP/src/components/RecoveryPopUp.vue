@@ -1,17 +1,16 @@
 <template>
-  <v-dialog v-model="showPopup" max-width="500px">
+  <v-dialog v-model="showPopup" max-width="500px" persistent>
     <v-card>
-      <v-card-title class="headline">S'inscrire</v-card-title>
+      <v-card-title class="headline">Changer votre mot de passe</v-card-title>
       <v-card-text>
         <v-alert v-if="error" :text="error" :type="popuptype"></v-alert>
         <v-divider></v-divider>
         <v-divider></v-divider>
         <v-divider></v-divider>
-        <v-form @submit.prevent>
-          <v-text-field label="E-mail" :loading="loading" :rules="emailRules" v-model="mail" variant="outlined" required></v-text-field>
+        <v-form @submit.prevent fast-fail=true>
           <v-text-field label="Mot de passe" :rules="notBlank" :loading="loading" v-model="password" type="password" variant="outlined" required></v-text-field>
           <v-text-field label="Confirmation du mot de passe" :rules="confirmPWD" :loading="loading" v-model="confirmpassword" type="password" variant="outlined" required></v-text-field>
-          <v-btn type="submit" :disabled="!validButton" :loading="loading" block class="mt-2" @click="register">S'inscrire</v-btn>
+          <v-btn type="submit" :disabled="!validButton" :loading="loading" block class="mt-2" @click="setNewPassword">Valider</v-btn>
       </v-form>
       </v-card-text>
       <v-card-actions>
@@ -28,7 +27,7 @@ export default {
 
   data() {
     return {
-      showPopup: false,
+      showPopup: true,
       loading: false,
       mail: '',
       error: '',
@@ -50,46 +49,28 @@ export default {
             return 'Votre mot de passe ne correspond pas.'
         },
       ],
-      emailRules: [
-        value => {
-          if (value) return true
-
-          return 'Saisissez un mail ..'
-        },
-        value => {
-          if (/.+@.+\..+/.test(value)) return true
-
-          return 'Saisissez un mail valide ..'
-        },
-      ],
     };
   },
   methods: {
-    openPopup() {
-      this.showPopup = true;
-    },
     closePopup() {
-      this.showPopup = false;
+      this.$router.push('/')
     },
-    async register(){
+    async setNewPassword(){
       this.loading = true
-      console.log(this.mail)
-      let Userinfo = await UserUtils.Register(this.mail,this.password)
-      if(Userinfo.sucess){
+      let Response = await UserUtils.RecoverPassword(this.$route.params.recoverycode,this.confirmpassword)
+      console.log(Response)
+      if(Response.sucess){
         this.popuptype = "success"
-        this.error = Userinfo.sucess.sucess
-
-      }else if(Userinfo.erreur){
-        console.log(Userinfo.erreur)
-        this.error = Userinfo.erreur.erreur
-
-      }else{
-        this.error = "Vos informations ne semblent pas correct !"
+        this.error = Response.sucess.sucess
+      }else if(Response.erreur){
+        this.popuptype = "error"
+        this.error = Response.erreur.erreur
       }
-      this.loading = false;
+      this.loading = false
 
     }
-  },  watch: {
+  },
+  watch: {
     'error'(newValue){
       setTimeout(()=>{
         this.error = ''
