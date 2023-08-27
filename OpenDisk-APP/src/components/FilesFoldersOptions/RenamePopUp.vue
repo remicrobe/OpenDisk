@@ -50,7 +50,7 @@ export default {
       this.type = type
       this.idtoedit = id
       this.nametoedit = nom
-
+      this.newname = nom
       this.showPopup = true;
     },
     closePopup() {
