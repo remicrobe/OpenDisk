@@ -61,7 +61,7 @@ RouteUtilisateur.post('/LienDeRecuperation', async (req,res)=>{
     }
 
 
-})
+}) 
 
 RouteUtilisateur.post('/EditPassword', async (req,res)=>{
     const RecoveryCode:string = req.body.RecoveryCode;
@@ -122,7 +122,7 @@ RouteUtilisateur.post('/ActivateAccount', async (req, res) => {
     }else
         res.send(500).send(erreur("Requete invalide"))
 
-})
+}) 
 
 RouteUtilisateur.post('/quisuisje', async (req, res) => {
     const token:string = req.body.token;

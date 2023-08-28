@@ -8,4 +8,6 @@ export default {
     PASSWORD: process.env.PASSWORD ?? 'PASSWORD',
     SMTP: process.env.SMTP ?? 'SMTP',
     PORTSMTP: process.env.PORTSMTP ?? 'PORTSMTP',
+    WEBSITEURL: process.env.WEBSITEURL ?? 'WEBSITEURL',
+    APIURL: process.env.APIURL ?? 'APIURL',
    } 

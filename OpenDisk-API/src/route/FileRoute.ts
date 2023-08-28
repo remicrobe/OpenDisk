@@ -12,6 +12,7 @@ import { Utilisateur } from "../entity/User";
 import * as fs from 'fs'
 import { Directory } from "../entity/Directory";
 import { DirectoryController } from "../controller/DirectoryController";
+import loadconfig from "../loadconfig";
 const FileRoute = Router()
 
 
@@ -136,6 +137,20 @@ FileRoute.get('/GetFile', async (req,res) => {
     }
 })
 
+FileRoute.get('/GetSharedFile/:token/:filename', async (req,res) => {
+    if(req.params.filename && req.params.token){
+        const sharedFile = await FileController.getSharedFile(req.params.token)
+        console.log(sharedFile)
+            if(sharedFile)
+                res.sendFile(path.resolve('src/uploads/' + sharedFile.file.nomFichier));
+            else
+                res.status(404).send("Fichier non trouvé")
+    }else{
+        res.status(404).send("Il manque un paramètre")
+        console.log(req.headers)
+    }
+})
+
 FileRoute.get('/GetContentInDirectory/:iddirectory/', async (req,res) => {
  
     if(req.params.iddirectory && req.headers.token){
@@ -190,6 +205,21 @@ FileRoute.post('/RenameFolder', async (req,res) =>{
 })
 
 
+
+FileRoute.post('/ShareFile/', async (req,res) => {
+    const usertoken:string = req.body.token
+    const idfile:number = req.body.idfile
+    if(idfile && usertoken){
+        let userlink = await FileController.ShareFile(idfile,usertoken)
+        if(userlink)
+            res.status(200).send(sucess(loadconfig.APIURL+"/Files/GetSharedFile/"+userlink.token+"/"+userlink.file.nomFichierOriginal))
+        else   
+            res.status(500).send(erreur('Une erreur est survenue'))
+    }else{
+        res.status(500).send(erreur('Votre requete semble incorrecte'))
+    }
+})
+
 FileRoute.get('/GetDirectory/', async (req,res) => {
 
     if(req.headers.token){
@@ -199,7 +229,7 @@ FileRoute.get('/GetDirectory/', async (req,res) => {
             res.status(500).send("Erreur")
         else 
             res.send({files:[],folder:Folders})
-        }else{
+        }else{ 
             res.status(500).send("Erreur")
         }
 })

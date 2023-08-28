@@ -60,6 +60,7 @@
             <v-list-item>
               <v-list-item-title @click="this.$refs.RenamePopUpVue.openPopup('fichier',file.nomFichierOriginal,file.idFichier)">Renommer</v-list-item-title>
               <v-list-item-title @click="this.$refs.ConfirmDeletePopUpVue.openPopup('fichier',file.nomFichierOriginal,file.idFichier)">Supprimer</v-list-item-title>
+              <v-list-item-title @click="this.$refs.SharePopUp.openPopup('fichier',file.idFichier)">Partager</v-list-item-title>
             </v-list-item>
           </v-list>
         </v-menu>
@@ -70,7 +71,8 @@
   </v-card>
 
   <RenamePopUpVue ref="RenamePopUpVue"></RenamePopUpVue>
-  <ConfirmDeletePopupVue ref="ConfirmDeletePopUpVue"></ConfirmDeletePopupVue>
+  <RenamePopUpVue ref="RenamePopUpVue"></RenamePopUpVue>
+  <SharePopUp ref="SharePopUp"></SharePopUp>
 </v-container>
 
 
@@ -81,10 +83,12 @@
   import UserUtils,{TypeFile,TypeFolder} from '@/utils/UserFunc'
   import RenamePopUpVue from './FilesFoldersOptions/RenamePopUp.vue'
   import ConfirmDeletePopupVue from './FilesFoldersOptions/ConfirmDeletePopup.vue'
+  import SharePopUp from './FilesFoldersOptions/SharePopUp.vue'
 export default{
   components: {
     RenamePopUpVue,
-    ConfirmDeletePopupVue
+    ConfirmDeletePopupVue,
+    SharePopUp
   },
   data(){
     return{
@@ -92,7 +96,7 @@ export default{
       folders: [] as TypeFolder[],
       originalfiles: [] as TypeFile[],
       originalfolders: [] as TypeFolder[]
-    
+
     }
   },
   async created() {
@@ -115,6 +119,8 @@ export default{
           this.folders = content
 
           this.files = [] as TypeFile[]
+          this.originalfiles = this.files
+          this.originalfolders = this.folders
 
         }
       }
@@ -124,7 +130,7 @@ export default{
         const fileId = idFichier;
         const fileName = nomFichierOriginal;
         const authToken:string = sessionStorage.getItem('monToken') || "0";
-        const redirectUrl = `http://localhost:5000/Files/GetFile/${fileId}/${fileName}`;
+        const redirectUrl = `${UserUtils.API_URL}/Files/GetFile/${fileId}/${fileName}`;
 
         const response = await fetch(redirectUrl, {
             method: 'GET',
@@ -158,7 +164,7 @@ export default{
 
         this.files = this.originalfiles;
         this.folders = this.originalfolders;
-
+      console.log(process.env.VUE_APP_ENV_VARIABLE)
       this.files= this.files.filter((file:TypeFile)=>{ return file.nomFichierOriginal.includes(this.datatosearch) })
       this.folders= this.folders.filter((folder:TypeFolder)=>{ return folder.DirectoryName.includes(this.datatosearch)})
     }

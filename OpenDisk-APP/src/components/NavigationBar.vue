@@ -94,7 +94,7 @@ export default{
         this.login = true
         userinfo = JSON.parse(userinfo)
         this.email = userinfo.email
-        this.profilpic = "http://localhost:5000/profilpicture/" + userinfo.profilepic
+        this.profilpic = UserUtils.API_URL +"/profilpicture/" + userinfo.profilepic
     }
     },
     show(e: MouseEvent, idfolder: number) {
@@ -125,7 +125,7 @@ export default{
       this.login = true
       userinfo = JSON.parse(userinfo)
       this.email = userinfo.email
-      this.profilpic = "http://localhost:5000/profilpicture/" + userinfo.profilepic
+      this.profilpic = UserUtils.API_URL + "/profilpicture/" + userinfo.profilepic
       let userfolder = await UserUtils.GetMainFolder()
       this.folders=userfolder
       console.log(this.folders)

@@ -1,4 +1,5 @@
 // Composables
+import UserUtils from '@/utils/UserFunc';
 import { createRouter, createWebHistory } from 'vue-router'
 
 const routes = [
@@ -21,6 +22,13 @@ const routes = [
     path: '/recovery/:recoverycode',
     name: 'RecoverAccount',
     component: () => import(/* webpackChunkName: "about" */ '../views/RecoverAccount.vue')
+  },
+  {
+    path: '/share/:token/:name',
+    redirect: to => {
+      const { token, name } = to.params;
+      return `${UserUtils.API_URL}/Files/GetSharedFile/${token}/${name}`;
+    }
   },
 
 

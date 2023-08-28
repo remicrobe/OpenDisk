@@ -7,7 +7,8 @@ import { UserController } from "./UserController";
 export class DirectoryController{
 
     static async DirectoryOwner(UserID,DirectoryID){
-        const myDirectory = await AppDataSource.getRepository(Directory).findOneBy({idDirectory:DirectoryID, ownerID: UserID})
+        const myDirectory = await AppDataSource.getRepository(Directory).createQueryBuilder("directory").where("directory.ownerID = :ownerID and idDirectory = :DirectoryID", { ownerID:UserID,DirectoryID:DirectoryID }).getOne();
+      
         if(myDirectory){
             return myDirectory
         }else{

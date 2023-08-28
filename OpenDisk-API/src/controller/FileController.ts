@@ -8,8 +8,14 @@ import { UserController } from "./UserController";
 import { Directory } from "../entity/Directory";
 import { IsNull } from "typeorm";
 import * as fs from 'fs'
+import { SharedLink } from "../entity/SharedLink";
+import { randomUUID } from "crypto";
 
 export class FileController{
+
+
+
+
 
     static async getFile(){
         return await AppDataSource.getRepository(File).find()
@@ -43,7 +49,7 @@ export class FileController{
       if(!UserID)
         return false
 
-      const myFile = await AppDataSource.getRepository(File).findOneBy({idFichier:fileID, ownerID:UserID})
+      const myFile = await AppDataSource.getRepository(File).createQueryBuilder("file").where("file.ownerID = :UserID AND file.idFichier = :fileID",{UserID,fileID}).getOne()
       
       if(myFile) return myFile
       else return false
@@ -71,7 +77,7 @@ export class FileController{
       const UserID = await UserController.GetUseriDFromToken(token)
       if(!UserID) return null
 
-      const myDirectory = await AppDataSource.getRepository(Directory).findOneBy({idDirectory:folderID})
+      const myDirectory = await DirectoryController.DirectoryOwner(UserID,folderID)
       if(!myDirectory) return null
       
 
@@ -94,7 +100,8 @@ export class FileController{
       const UserID = await UserController.GetUseriDFromToken(token)
       if(!UserID) return null
 
-      const myDirectory = await AppDataSource.getRepository(Directory).findBy({SubDirectoryID:folderID})
+
+      const myDirectory = await AppDataSource.getRepository(Directory).createQueryBuilder("directory").where("directory.ownerID = :ownerID and SubDirectoryID = :folderID", { ownerID:UserID,folderID:folderID }).getMany();
       if(!myDirectory) return null
       return myDirectory
       
@@ -105,15 +112,37 @@ export class FileController{
 
     }
 
+
+    static async ShareFile(fileID:number,token:string){
+      try {
+        const File = await this.isFileToUser(fileID,token)
+        if(File) {
+          const OldShare = await AppDataSource.getRepository(SharedLink).createQueryBuilder("sharedlink").where("fileIdFichier = :fileID", { fileID }).getOne()
+          if(OldShare) await AppDataSource.getRepository(SharedLink).remove(OldShare)
+          const NewSharedFile = new SharedLink
+          NewSharedFile.token = randomUUID()
+          NewSharedFile.file = File
+          await AppDataSource.getRepository(SharedLink).save(NewSharedFile)
+          return NewSharedFile
+        }
+        return false
+      } catch (err) {
+        return false
+      } 
+
+    }
+
+    static async getSharedFile(token: string) {
+      return await AppDataSource.getRepository(SharedLink).createQueryBuilder("sharedlink").innerJoinAndSelect("sharedlink.file","file").where("token = :token", { token }).getOne()
+    }
+
     static async GetFolders(token){
-      
+
       const UserID = await UserController.GetUseriDFromToken(token)
       if(!UserID) return null
 
-      const myDirectory = await AppDataSource.getRepository(Directory).find({
-        where:{SubDirectoryID:IsNull()
-        }
-      })
+      const myDirectory = await AppDataSource.getRepository(Directory).createQueryBuilder("directory").where("directory.ownerID = :ownerID and SubDirectoryID is NULL", { ownerID:UserID }).getMany();
+      console.log(myDirectory)
       if(!myDirectory) return null
       return myDirectory
       
