@@ -85,7 +85,7 @@ export default {
       setTimeout(()=>{
         this.error = ''
         if(this.popuptype==='success'){
-          location.reload()
+          this.$emit('reload')
         }
       },1000)
     }

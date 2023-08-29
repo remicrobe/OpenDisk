@@ -7,7 +7,7 @@
         <v-divider></v-divider>
         <v-divider></v-divider>
         <v-divider></v-divider>
-          <v-text-field label="Votre lien : " :disabled=true :loading="loading" v-model="sharedlink" variant="outlined" required></v-text-field>
+          <v-text-field autofocus ref="sharedLinkText" label="Votre lien : " :disabled=false :loading="loading" v-model="sharedlink" variant="outlined" required></v-text-field>
           <v-btn type="submit" :loading="loading" block class="mt-2" @click="copy">Copier</v-btn>
       </v-card-text>
       <v-card-actions>
@@ -31,7 +31,7 @@ export default {
       error: '',
       type: '',
       idtoshare: 0,
-      sharedlink: '555',
+      sharedlink: '404',
       popuptype:  'error' as 'success' | 'error',
     };
   },
@@ -61,9 +61,18 @@ export default {
       }
     },
     copy(){
-      navigator.clipboard.writeText(this.sharedlink)
-      this.popuptype = "success"
-      this.error = "Lien copié !"
+
+
+        try {
+            this.$refs.sharedLinkText.select()
+            document.execCommand('copy');
+            this.popuptype = "success"
+            this.error = "Lien copié !"
+        } catch (error) {
+            console.error(error);
+        }
+
+
     }
   },
   watch: {

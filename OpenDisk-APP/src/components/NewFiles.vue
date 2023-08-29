@@ -50,7 +50,7 @@ export default {
           this.$emit('reload-parent');
           this.info = "Votre fichier a bien été importé !"
           this.sucess = "success"
-          this.$router.go(0)
+          this.$emit('reload')
         }else{
           this.info = "Une erreur est survenue"
           this.sucess = "error"
@@ -58,5 +58,13 @@ export default {
       }
   }
   },
+  watch: {
+    'info'(newValue){
+      setTimeout(()=>{
+        this.error = ''
+        this.showPopup = false;
+      },3000)
+    }
+  }
 };
 </script>

@@ -49,9 +49,17 @@ export default {
       if(FolderCreated){
         this.sucess = "success"
         this.info = "Votre dossier a bien été créé"
-        this.$router.go(0)
+        this.$emit('reload')
       }
     }
   },
+  watch: {
+    'info'(newValue){
+      setTimeout(()=>{
+        this.error = ''
+        this.showPopup = false;
+      },3000)
+    }
+  }
 };
 </script>

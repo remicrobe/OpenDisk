@@ -202,7 +202,7 @@ FileRoute.post('/RenameFolder', async (req,res) =>{
 
 
 
-})
+}) 
 
 
 
@@ -212,7 +212,7 @@ FileRoute.post('/ShareFile/', async (req,res) => {
     if(idfile && usertoken){
         let userlink = await FileController.ShareFile(idfile,usertoken)
         if(userlink)
-            res.status(200).send(sucess(loadconfig.APIURL+"/Files/GetSharedFile/"+userlink.token+"/"+userlink.file.nomFichierOriginal))
+            res.status(200).send(sucess(loadconfig.APIURL+"/Files/GetSharedFile/"+userlink.token+"/"+userlink.file.nomFichierOriginal.replace(' ','_')))
         else   
             res.status(500).send(erreur('Une erreur est survenue'))
     }else{

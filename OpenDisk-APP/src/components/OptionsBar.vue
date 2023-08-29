@@ -35,8 +35,8 @@
       </v-menu>
       </v-btn>
     </v-toolbar>
-    <NewFolderPopUp ref="folderpopup"></NewFolderPopUp>
-    <NewFiles ref="filespopup"></NewFiles>
+    <NewFolderPopUp @reload="this.$emit('reload')" ref="folderpopup"></NewFolderPopUp>
+    <NewFiles @reload="this.$emit('reload')" ref="filespopup"></NewFiles>
 
   </div>
 

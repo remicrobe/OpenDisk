@@ -1,7 +1,7 @@
 <template>
-  <OptionsBar @search="search"/>
-  <DisplayFilesFolders :datatosearch="toSearch" />
-  <NavBar   style='z-index:20001;'/>
+  <OptionsBar @reload="this.$refs.displayfiles.getContents()" @search="search"/>
+  <DisplayFilesFolders ref="displayfiles" :datatosearch="toSearch" />
+  <NavBar  style='z-index:20001;'/>
   <HelloPage />
 
 
@@ -20,6 +20,12 @@
 
 <script lang="ts">
  export default {
+  components:{
+    NavBar,
+    OptionsBar,
+    HelloPage,
+    DisplayFilesFolders
+  },
     data(){
       return{
         toSearch: '',

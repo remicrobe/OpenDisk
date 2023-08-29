@@ -70,9 +70,9 @@
 
   </v-card>
 
-  <RenamePopUpVue ref="RenamePopUpVue"></RenamePopUpVue>
-  <RenamePopUpVue ref="RenamePopUpVue"></RenamePopUpVue>
-  <SharePopUp ref="SharePopUp"></SharePopUp>
+  <RenamePopUpVue style='z-index:20002' ref="RenamePopUpVue" @reload="getContents()"></RenamePopUpVue>
+  <ConfirmDeletePopupVue style='z-index:20002' ref="ConfirmDeletePopUpVue" @reload="getContents()"></ConfirmDeletePopupVue>
+  <SharePopUp style='z-index:20002' ref="SharePopUp" @reload="getContents()"></SharePopUp>
 </v-container>
 
 

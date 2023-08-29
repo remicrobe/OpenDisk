@@ -11,7 +11,7 @@ export class SharedLink{
     @Column()
     token: string
 
-    @OneToOne(type=> File)
+    @OneToOne(type=> File,{cascade:true, onDelete:"CASCADE"})
     @JoinColumn()
     file: File
 }

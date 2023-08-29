@@ -23,13 +23,7 @@ const routes = [
     name: 'RecoverAccount',
     component: () => import(/* webpackChunkName: "about" */ '../views/RecoverAccount.vue')
   },
-  {
-    path: '/share/:token/:name',
-    redirect: to => {
-      const { token, name } = to.params;
-      return `${UserUtils.API_URL}/Files/GetSharedFile/${token}/${name}`;
-    }
-  },
+
 
 
 ]
