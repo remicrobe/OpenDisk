@@ -1,5 +1,5 @@
 <template>
-  <OptionsBar @reload="this.$refs.displayfiles.getContents() && this.$refs.navbar.reload()" @search="search"/>
+  <OptionsBar @reload="sendReloadToChild()" @search="search"/>
   <DisplayFilesFolders @reload="this.$refs.navbar.reload()" ref="displayfiles" :datatosearch="toSearch" />
   <NavBar ref="navbar" style='z-index:20001;'/>
   <HelloPage />
@@ -35,8 +35,13 @@
       search(value:string){
         console.log(value)
         this.toSearch = value
+      },
+      sendReloadToChild(){
+        this.$refs.displayfiles.getContents()
+        this.$refs.navbar.reload()
       }
-    }
+    },
+
   };
 </script>
 

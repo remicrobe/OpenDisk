@@ -23,10 +23,11 @@ export class FileController{
 
     static async RemoveFileInDirectory(directory:Directory){
       const myFiles = await AppDataSource.getRepository(File).findBy({directory:directory})
-      myFiles.forEach(file => {
+      myFiles.forEach(async file => {
+        console.log(file)
         fs.unlink(path.resolve('src/uploads/' + file.nomFichier), (err)=> {console.log(err)})
-        AppDataSource.getRepository(File).remove(file)
-      });
+        await AppDataSource.getRepository(File).remove(file)
+      }); 
     }
     static async deleteFile(fileID, token) {
       try {

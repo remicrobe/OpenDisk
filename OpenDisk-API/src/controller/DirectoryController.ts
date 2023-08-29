@@ -87,19 +87,22 @@ export class DirectoryController{
         } 
     }  
 
-    static async removeSubDirectory(directory:Directory){
+    static async removeSubDirectory(directory:Directory, isSubDirectory=false){
         try {
             let subsdirectory = await AppDataSource.getRepository(Directory).findBy({SubDirectoryID:directory.idDirectory})
-            subsdirectory.forEach((subdirectory)=>{
-                FileController.RemoveFileInDirectory(subdirectory)
-                this.removeSubDirectory(subdirectory)
-                AppDataSource.getRepository(Directory).remove(subdirectory)
-            })
-            await FileController.RemoveFileInDirectory(directory)
-            AppDataSource.getRepository(Directory).remove(directory)
+            console.log(subsdirectory)
+            for (const subdirectory of subsdirectory) {
+                await FileController.RemoveFileInDirectory(subdirectory);
+                await this.removeSubDirectory(subdirectory,true);
+                await AppDataSource.getRepository(Directory).remove(subdirectory);
+            }
+            if(!isSubDirectory){
+                await FileController.RemoveFileInDirectory(directory)
+                await AppDataSource.getRepository(Directory).remove(directory)
+            }
             return true
         } catch (err) {
-            return false
+            return false  
         }
         
     }

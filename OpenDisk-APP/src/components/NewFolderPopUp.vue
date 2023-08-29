@@ -55,8 +55,10 @@ export default {
   },
   watch: {
     'info'(newValue){
+      this.folderName = ''
       setTimeout(()=>{
         this.info = ''
+
         this.showPopup = false;
       },3000)
     }
