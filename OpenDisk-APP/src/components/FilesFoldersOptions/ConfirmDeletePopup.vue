@@ -83,6 +83,7 @@ export default {
         this.error = ''
         if(this.popuptype==='success'){
           this.$emit('reload')
+          this.showPopup = false;
         }
       },1000)
     }

@@ -123,7 +123,7 @@ FileRoute.get('/GetFile', async (req,res) => {
         const isFileToUser = await FileController.isFileToUser(req.params.id, req.headers.token)
         if(isFileToUser){
             const FileToSearch = new File
-            const vraiNom = await AppDataSource.getRepository(File).findOneBy({nomFichierOriginal: req.params.filename})
+            const vraiNom = await AppDataSource.getRepository(File).findOneBy({idFichier: parseInt(req.params.id)})
             if(vraiNom)
                 res.sendFile(path.resolve('src/uploads/' + vraiNom.nomFichier));
             else
@@ -133,7 +133,6 @@ FileRoute.get('/GetFile', async (req,res) => {
         }
     }else{
         res.status(404).send("Il manque un paramètre")
-        console.log(req.headers)
     }
 })
 
@@ -147,7 +146,6 @@ FileRoute.get('/GetSharedFile/:token/:filename', async (req,res) => {
                 res.status(404).send("Fichier non trouvé")
     }else{
         res.status(404).send("Il manque un paramètre")
-        console.log(req.headers)
     }
 })
 

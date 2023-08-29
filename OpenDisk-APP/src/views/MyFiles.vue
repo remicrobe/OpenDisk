@@ -1,7 +1,7 @@
 <template>
-  <OptionsBar @reload="this.$refs.displayfiles.getContents()" @search="search"/>
-  <DisplayFilesFolders ref="displayfiles" :datatosearch="toSearch" />
-  <NavBar  style='z-index:20001;'/>
+  <OptionsBar @reload="this.$refs.displayfiles.getContents() && this.$refs.navbar.reload()" @search="search"/>
+  <DisplayFilesFolders @reload="this.$refs.navbar.reload()" ref="displayfiles" :datatosearch="toSearch" />
+  <NavBar ref="navbar" style='z-index:20001;'/>
   <HelloPage />
 
 

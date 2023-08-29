@@ -95,6 +95,9 @@ export default{
         userinfo = JSON.parse(userinfo)
         this.email = userinfo.email
         this.profilpic = UserUtils.API_URL +"/profilpicture/" + userinfo.profilepic
+        let userfolder = await UserUtils.GetMainFolder()
+        this.folders=userfolder
+        console.log('reload file')
     }
     },
     show(e: MouseEvent, idfolder: number) {
@@ -108,14 +111,15 @@ export default{
     let deletedfolder = await UserUtils.DeleteFolder(this.foldertodelete)
     console.log(this.folders)
     if(deletedfolder){
+      this.$router.push('/')
       this.folders = this.folders.filter((folder:Folder)=>{
         if(folder.idDirectory !== this.foldertodelete)
           return true
       })
 
-      if(parseInt(this.$route.params.id as string) === this.foldertodelete){
-        this.$router.push('/myFiles/')
-      }
+
+
+
     }
   }
   },

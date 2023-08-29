@@ -70,8 +70,8 @@
 
   </v-card>
 
-  <RenamePopUpVue style='z-index:20002' ref="RenamePopUpVue" @reload="getContents()"></RenamePopUpVue>
-  <ConfirmDeletePopupVue style='z-index:20002' ref="ConfirmDeletePopUpVue" @reload="getContents()"></ConfirmDeletePopupVue>
+  <RenamePopUpVue style='z-index:20002' ref="RenamePopUpVue" @reload="getContents() && this.$emit('reload')"></RenamePopUpVue>
+  <ConfirmDeletePopupVue style='z-index:20002' ref="ConfirmDeletePopUpVue" @reload="getContents() && this.$emit('reload')"></ConfirmDeletePopupVue>
   <SharePopUp style='z-index:20002' ref="SharePopUp" @reload="getContents()"></SharePopUp>
 </v-container>
 

@@ -56,7 +56,7 @@ export default {
   watch: {
     'info'(newValue){
       setTimeout(()=>{
-        this.error = ''
+        this.info = ''
         this.showPopup = false;
       },3000)
     }
