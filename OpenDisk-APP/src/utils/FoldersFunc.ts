@@ -1,10 +1,33 @@
+import UserFunc from "./UserFunc";
+
 export default class FoldersFunc{
+
+
+  static async ShareFolder(idtoshare: string, usertoshare: string) {
+    const token = sessionStorage.getItem('monToken');
+    const response = await fetch(UserFunc.API_URL + "/Files/ShareFolders",{
+      method:"POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ token: token, idfolder: idtoshare, usertoshare:usertoshare}),
+
+    })
+
+
+
+    if(response.ok){
+      return true
+    }else{
+      return false
+    }
+  }
 
   static async GetContentInDirectory(directory:number){
     const token = sessionStorage.getItem('monToken');
     console.log(token)
     if(token){
-      const response = await fetch(this.API_URL + "/Files/GetContentInDirectory/" + directory,{
+      const response = await fetch(UserFunc.API_URL + "/Files/GetContentInDirectory/" + directory,{
         method:"GET",
         headers:{
           "token": token
@@ -27,7 +50,7 @@ export default class FoldersFunc{
     const token = sessionStorage.getItem('monToken');
     console.log(token)
     if(token){
-      const response = await fetch(this.API_URL + "/Files/GetDirectory",{
+      const response = await fetch(UserFunc.API_URL + "/Files/GetDirectory",{
         method:"GET",
         headers:{
           "token": token
@@ -35,9 +58,31 @@ export default class FoldersFunc{
       })
 
       const result = await response.json()
-
+      console.log(result)
       if(response.ok && result.folder){
-        return result.folder
+        return result
+      }else{
+        return false
+      }
+    }else return false
+  }
+
+  static async GetSharedFoldersDetails(foldersid){
+    const token = sessionStorage.getItem('monToken');
+    console.log(token)
+    if(token){
+      const response = await fetch(UserFunc.API_URL + "/Files/GetSharedFoldersDetails",{
+        method:"GET",
+        headers:{
+          "token": token,
+          "idfolder": foldersid
+        }
+      })
+
+      const result = await response.json()
+      console.log(result.details)
+      if(response.ok && result.details){
+        return result.details
       }else{
         return false
       }
@@ -45,10 +90,9 @@ export default class FoldersFunc{
   }
 
 
-
   static async CreateFolder(subdirectory:number,name:string){
     const token = sessionStorage.getItem('monToken');
-    const response = await fetch(this.API_URL + "/Files/NewDirectory",{
+    const response = await fetch(UserFunc.API_URL + "/Files/NewDirectory",{
       method:"POST",
       headers: {
         "Content-Type": "application/json",
@@ -70,7 +114,7 @@ export default class FoldersFunc{
 
 static async DeleteFolder(subdirectory:number){
   const token = sessionStorage.getItem('monToken');
-  const response = await fetch(this.API_URL + "/Files/RemoveDirectory",{
+  const response = await fetch(UserFunc.API_URL + "/Files/RemoveDirectory",{
     method:"POST",
     headers: {
       "Content-Type": "application/json",
@@ -93,7 +137,7 @@ static async DeleteFolder(subdirectory:number){
 
 static async RenameFolder(idFolder:number,newname:string){
   const token = sessionStorage.getItem('monToken');
-  const response = await fetch(this.API_URL + "/Files/RenameFolder",{
+  const response = await fetch(UserFunc.API_URL + "/Files/RenameFolder",{
     method:"POST",
     headers: {
       "Content-Type": "application/json",

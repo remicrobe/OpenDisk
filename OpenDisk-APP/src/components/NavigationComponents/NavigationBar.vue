@@ -4,9 +4,7 @@
       <v-navigation-drawer class="navigation-bar"
         expand-on-hover
         rail
-        permanent
-
-      >
+        permanent>
 
         <v-list  v-if="login">
           <v-list-item
@@ -30,11 +28,18 @@
           <v-list-item prepend-icon="mdi-folder" @click="$router.push('/myFiles')" title="My Files" value="myfiles"></v-list-item>
         </v-list>
 
-              <v-divider></v-divider>
+        <v-divider></v-divider>
         <v-list density="compact" nav v-if="login" >
-          <v-list-item v-for="folder in folders" prepend-icon="mdi-folder" @contextmenu="show($event, folder.idDirectory)" @click="$router.push('/myFiles/' + folder.idDirectory)" :title="folder.DirectoryName" :key="folder.idDirectory" :value="folder.idDirectory"></v-list-item>
-
+          <v-list-item v-for="folder in folders" prepend-icon="mdi-folder" @contextmenu="show($event, folder.idDirectory)" @click="$router.push('/myFiles/' + folder.idDirectory)" :title="folder.DirectoryName" :key="folder.idDirectory" :value="folder.idDirectory"><v-chip v-if="folder.shared" style="float: right;" color="primary" x-small append-icon="mdi-close" @click="console.log('A supprimé')">Partagé</v-chip></v-list-item>
         </v-list>
+
+        <v-divider></v-divider>
+
+        <v-list density="compact" nav v-if="login" >
+          <v-list-item v-for="folder in sharedfolders" prepend-icon="mdi-folder" @contextmenu="show($event, folder.idDirectory)" @click="$router.push('/myFiles/' + folder.idDirectory)" :title="folder.DirectoryName" :key="folder.idDirectory" :value="folder.idDirectory"><v-chip style="float: right;" color="primary" append-icon="mdi-close" @click="console.log('A supprimé')" x-small >Partagé avec vous</v-chip></v-list-item>
+        </v-list>
+
+
       <v-menu anchor="bottom end"  v-model="showMenu" :style="{position: 'fixed', top: y + 'px', left: x + 'px', 'z-index': 999969}">
               <v-list>
                 <v-list-item  >
@@ -87,6 +92,7 @@ export default{
       x: 20,
       y: 50,
       foldertodelete: 0,
+      sharedfolders: [] as TypeFolder[]
     };
   },
   methods: {
@@ -98,7 +104,8 @@ export default{
         this.email = userinfo.email
         this.profilpic = UserFunc.API_URL +"/profilpicture/" + userinfo.profilepic
         let userfolder = await FoldersFunc.GetMainFolder()
-        this.folders=userfolder
+        this.folders= userfolder.folder
+        this.sharedfolders= userfolder.sharedfolder
         console.log('reload file')
     }
     },
@@ -132,9 +139,14 @@ export default{
       userinfo = JSON.parse(userinfo)
       this.email = userinfo.email
       this.profilpic = UserFunc.API_URL + "/profilpicture/" + userinfo.profilepic
+
+
       let userfolder = await FoldersFunc.GetMainFolder()
-      this.folders=userfolder
-      console.log(this.folders)
+      console.log(userfolder)
+      this.folders= userfolder.folder
+      this.sharedfolders= userfolder.sharedfolder
+      console.log(this.sharedfolder)
+
     }else{
       this.$router.push('/')
     }

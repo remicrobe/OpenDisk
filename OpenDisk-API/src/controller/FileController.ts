@@ -143,7 +143,7 @@ export class FileController{
       if(!UserID) return null
 
       const myDirectory = await AppDataSource.getRepository(Directory).createQueryBuilder("directory").where("directory.ownerID = :ownerID and SubDirectoryID is NULL", { ownerID:UserID }).getMany();
-      console.log(myDirectory)
+      
       if(!myDirectory) return null
       return myDirectory
       

@@ -43,8 +43,8 @@
 </template>
 
 <script lang="ts">
-import NewFiles from '@/components/NewFiles.vue'
-import NewFolderPopUp from '@/components/NewFolderPopUp.vue'
+import NewFiles from '@/components/FilesFoldersComponents/NewFiles.vue'
+import NewFolderPopUp from '@/components/FilesFoldersComponents/NewFolderPopUp.vue'
 export default {
 
 

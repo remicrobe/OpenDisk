@@ -5,7 +5,7 @@ import { AppDataSource } from "../data-source";
 import { File } from "../entity/File";
 import * as path from "path"
 import { UserController } from "../controller/UserController";
-import { erreur, sucess } from "../utils/Utils";
+import { ValidEmail, erreur, sucess } from "../utils/Utils";
 import { stringify } from "qs";
 import { Utilisateur } from "../entity/User";
 
@@ -45,7 +45,7 @@ FileRoute.post('/UploadFile', (req,res) => {
                     } catch (err) {
                         fs.unlink(path.resolve('src/uploads/' + req.file.filename), (err)=> {console.log(err)}) // Si on arrive dans le try catch on prends la précaution de supprimer le fichier potentiellement enregistré
                         res.status(500).send(erreur("Une erreur est survenue"))
-                    }
+                    } 
                     }
                 }
             )        
@@ -84,7 +84,7 @@ FileRoute.post('/UploadProfilPic', async (req,res) => {
 FileRoute.post('/NewDirectory', async (req,res) => {
 
     if(req.body.token && req.body.FolderName){
-        let userid = await UserController.GetUseriDFromToken(req.body.token)
+        let userid = await UserController.GetUserFromToken(req.body.token)
         if(!userid){
             res.status(500).send(erreur("Token invalide"))
         }else{
@@ -154,13 +154,12 @@ FileRoute.get('/GetContentInDirectory/:iddirectory/', async (req,res) => {
     if(req.params.iddirectory && req.headers.token){
         const FilesInDirectory = await FileController.FilesInDirectory(req.params.iddirectory,req.headers.token)
         const FolderInFolder = await FileController.FolderInFolder(req.params.iddirectory, req.headers.token)
-
         if(!FilesInDirectory || !FolderInFolder)
             res.status(500).send("Erreur")
         else 
             res.send({files:FilesInDirectory,folder:FolderInFolder})
     }else{
-        res.status(500).send("Erreur")
+        res.status(500).send("Erreur requete invalide")
     }
 })
 
@@ -218,19 +217,51 @@ FileRoute.post('/ShareFile/', async (req,res) => {
     }
 })
 
+FileRoute.post('/ShareFolders/', async (req,res) => {
+    const usertoken:string = req.body.token
+    const idfolder:number = req.body.idfolder
+    const usertoshare:string = req.body.usertoshare
+    if(idfolder && usertoken && ValidEmail(usertoshare)){
+        let userlink = await DirectoryController.ShareFolders(idfolder,usertoken,usertoshare)
+        if(userlink)
+            res.status(200).send(sucess("L'utilisateur a désormais accès a ce repertoire sur son espace OpenDisk"))
+        else   
+            res.status(500).send(erreur('Une erreur est survenue'))
+    }else{
+        res.status(500).send(erreur('Votre requete semble incorrecte'))
+    }
+})
+
 FileRoute.get('/GetDirectory/', async (req,res) => {
 
     if(req.headers.token){
         const Folders = await FileController.GetFolders(req.headers.token)
-
+        const SharedFolders = await DirectoryController.GetSharedFolders(req.headers.token)
+      
         if(!Folders)
             res.status(500).send("Erreur")
         else 
-            res.send({files:[],folder:Folders})
+            res.send({files:[],folder:Folders,sharedfolder:SharedFolders})
         }else{ 
             res.status(500).send("Erreur")
         }
 })
+
+FileRoute.get('/GetSharedFoldersDetails/', async (req,res) => {
+    const token = req.headers.token
+    const sharedfolder = req.headers.idfolder
+    if(token && sharedfolder){
+        const sharedFoldersDetails = await DirectoryController.ShareFoldersDetails(sharedfolder,token)
+
+        if(sharedFoldersDetails){
+            res.send({details:sharedFoldersDetails})
+        }else{
+            res.status(404).send(erreur("erreur"))
+        }
+    }
+})
+
+
 
 FileRoute.post('/RemoveDirectory/', async (req,res) => {
     if(req.body.token && req.body.directoryId){

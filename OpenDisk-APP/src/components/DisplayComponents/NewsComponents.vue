@@ -23,3 +23,11 @@
 
   </v-card>
 </template>
+
+<style scoped>
+@media screen and (max-width: 1280px){
+  .v-card {
+  padding-left: 7%;
+}
+}
+</style>

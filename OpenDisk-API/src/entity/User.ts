@@ -1,6 +1,7 @@
-import {Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, OneToMany} from "typeorm";
+import {Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, OneToMany, ManyToOne, JoinTable, ManyToMany, JoinColumn} from "typeorm";
 import { Directory } from "./Directory";
 import { File } from "./File";
+import { SharedFolders } from "./SharedFolders";
 
 
 export enum RoleUtilisateur {
@@ -45,5 +46,9 @@ export class Utilisateur {
 
     @Column({default: "default.jpg"})
     profilepic: string
+
+    @ManyToMany(() => SharedFolders, sharedFolder => sharedFolder.sharedUsers)
+    @JoinTable()
+    sharedFolders: SharedFolders[];
 }
  

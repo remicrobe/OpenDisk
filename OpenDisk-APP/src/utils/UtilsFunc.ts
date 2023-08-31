@@ -14,10 +14,17 @@ export interface TypeFolder {
   idDirectory: number;
   DirectoryName: string;
   SubDirectoryID:number
+  shared:boolean
 }
 export interface TypeFile {
   idFichier: number;
   nomFichier: string;
   nomFichierOriginal:string
   IdDirectory:string
+}
+
+export interface TypeUser {
+  dateCreation: string;
+  email:string
+  profilepic:string
 }

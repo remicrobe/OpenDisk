@@ -7,6 +7,14 @@ import { erreur } from "../utils/Utils";
 
 export class UserController{
 
+    static async GetUserFromMail(email: string) {
+        try{
+            return await AppDataSource.getRepository(Utilisateur).findOneBy({email: email})
+        }catch(err){
+            return false
+        }
+    }
+
     static async GetUserFromToken(token){
         try{
             return await AppDataSource.getRepository(Utilisateur).findOneBy({uuid: token})

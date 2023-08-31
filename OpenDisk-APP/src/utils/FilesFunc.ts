@@ -1,9 +1,11 @@
+import UserFunc from "./UserFunc";
+
 export default class FilesFunc{
   static async GetSharedLink(fileid:number){
     const token = sessionStorage.getItem('monToken');
     if(!token) return false
 
-    const response = await fetch(this.API_URL + "/Files/ShareFile",{
+    const response = await fetch(UserFunc.API_URL + "/Files/ShareFile",{
       method:"POST",
       headers: {
         "Content-Type": "application/json",
@@ -32,7 +34,7 @@ export default class FilesFunc{
       formData.append('file', file);
 
       try {
-        const response = await fetch(this.API_URL + "/Files/UploadFile", {
+        const response = await fetch(UserFunc.API_URL + "/Files/UploadFile", {
           method: "POST",
           headers: {},
           body: formData,
@@ -55,7 +57,7 @@ export default class FilesFunc{
 
 static async DeleteFile(fileID:number){
   const token = sessionStorage.getItem('monToken');
-  const response = await fetch(this.API_URL + "/Files/RemoveFile",{
+  const response = await fetch(UserFunc.API_URL + "/Files/RemoveFile",{
     method:"POST",
     headers: {
       "Content-Type": "application/json",
@@ -77,7 +79,7 @@ static async DeleteFile(fileID:number){
 
 static async RenameFile(idfile:number,newname:string){
   const token = sessionStorage.getItem('monToken');
-  const response = await fetch(this.API_URL + "/Files/RenameFile",{
+  const response = await fetch(UserFunc.API_URL + "/Files/RenameFile",{
     method:"POST",
     headers: {
       "Content-Type": "application/json",

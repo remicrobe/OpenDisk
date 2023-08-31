@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany, ManyToOne } from "typeorm"
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany, ManyToOne, JoinColumn, JoinTable } from "typeorm"
 import { File } from "./File";
 import { Utilisateur } from "./User";
 
@@ -14,11 +14,14 @@ export class Directory {
     @Column({default:false})
     MainDirectory: boolean
 
+    @Column({default:false})
+    shared: boolean
+
     @Column({nullable:true})
     SubDirectoryID: number
 
-    @ManyToOne(() => Utilisateur, (user) => user.directory)
-    ownerID: number
+    @ManyToOne(type => Utilisateur, (user) => user.directory)
+    ownerID: Utilisateur
 
     @OneToMany(() => File, (file) => file.directory)
     files: File[]

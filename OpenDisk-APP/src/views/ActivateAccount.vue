@@ -5,8 +5,8 @@
 
 <script lang="ts">
 
-    import HelloPage from '@/components/DisplayComponents/HelloPage.vue'
-    import UserUtils from '@/utils/UserFunc'
+import HelloPage from '@/components/DisplayComponents/HelloPage.vue'
+import UserFunc from '@/utils/UserFunc'
 
 export default {
   data() {
@@ -16,7 +16,7 @@ export default {
   },
   async created() {
     console.log('okk')
-    let AccountActivated = await UserUtils.ActivateAccount(this.$route.params.activationcode as string)
+    let AccountActivated = await UserFunc.ActivateAccount(this.$route.params.activationcode as string)
     if(AccountActivated){
       this.msg = "Votre compte a été activé"
     }else{

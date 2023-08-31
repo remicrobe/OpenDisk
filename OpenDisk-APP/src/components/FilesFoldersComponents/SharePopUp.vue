@@ -1,7 +1,7 @@
 <template>
   <v-dialog v-model="showPopup" max-width="500px">
     <v-card>
-      <v-card-title class="headline">Partager votre fichier</v-card-title>
+      <v-card-title class="headline">Partager votre {{this.type}}</v-card-title>
       <v-card-text>
         <v-alert v-if="error" :text="error" :type="popuptype"></v-alert>
         <v-divider></v-divider>
@@ -21,6 +21,7 @@
 
 
 import FilesFunc from '@/utils/FilesFunc';
+import FoldersFunc from '@/utils/FoldersFunc';
 export default {
 
   data() {
@@ -47,7 +48,7 @@ export default {
       this.showPopup = false;
     },
     async getSharedLink(){
-      if(this.idtoshare){
+      if(this.idtoshare && this.type === "fichier"){
         let result = await FilesFunc.GetSharedLink(this.idtoshare)
         if(result){
           if(result.sucess.sucess){
@@ -55,6 +56,13 @@ export default {
           }else{
             return "Erreur"
           }
+        }else{
+          return "Erreur"
+        }
+      } else if(this.idtoshare && this.type === "dossier"){
+        let result = await FoldersFunc.ShareFolder(this.idtoshare,"mickroglosse@gmail.com")
+        if(result){
+          return "Votre dossier a bien été partagé a l'utilisateur"
         }else{
           return "Erreur"
         }

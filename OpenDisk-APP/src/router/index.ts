@@ -9,7 +9,7 @@ const routes = [
     component: () => import(/* webpackChunkName: "about" */ '../views/Home.vue')
   },
   {
-    path: '/myFiles/:id?',
+    path: '/:shared?/myFiles/:id?/',
     name: 'MyFiles',
     component: () => import(/* webpackChunkName: "about" */ '../views/MyFiles.vue')
   },

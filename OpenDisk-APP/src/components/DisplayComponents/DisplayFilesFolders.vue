@@ -10,6 +10,7 @@
     v-for="folder in folders" :key="folder.idDirectory"
   >
     <v-card-item >
+      <v-chip v-if="folder.shared" style="float: right;" color="primary" append-icon="mdi-close" @click="console.log('A supprimé')" x-small>Partagé</v-chip>
        <div class="text-overline mb-1">
           Dossier
         </div>
@@ -28,6 +29,7 @@
             <v-list-item>
               <v-list-item-title @click="this.$refs.RenamePopUpVue.openPopup('dossier',folder.DirectoryName,folder.idDirectory)">Renommer</v-list-item-title>
               <v-list-item-title @click="this.$refs.ConfirmDeletePopUpVue.openPopup('dossier',folder.DirectoryName,folder.idDirectory)">Supprimer</v-list-item-title>
+              <v-list-item-title @click="this.$refs.ShareFoldersPopup.openPopup('dossier',folder.idDirectory)">Partager</v-list-item-title>
             </v-list-item>
           </v-list>
         </v-menu>
@@ -70,6 +72,7 @@
 
   </v-card>
 
+  <ShareFoldersPopup style='z-index:20002' ref="ShareFoldersPopup" @reload="getContents() && this.$emit('reload')"></ShareFoldersPopup>
   <RenamePopUpVue style='z-index:20002' ref="RenamePopUpVue" @reload="getContents() && this.$emit('reload')"></RenamePopUpVue>
   <ConfirmDeletePopupVue style='z-index:20002' ref="ConfirmDeletePopUpVue" @reload="getContents() && this.$emit('reload')"></ConfirmDeletePopupVue>
   <SharePopUp style='z-index:20002' ref="SharePopUp" @reload="getContents()"></SharePopUp>
@@ -80,17 +83,20 @@
 
 
 <script lang="ts">
-  import UserFunc from '@/utils/UserFunc'
-  import RenamePopUpVue from './FilesFoldersOptions/RenamePopUp.vue'
-  import ConfirmDeletePopupVue from './FilesFoldersOptions/ConfirmDeletePopup.vue'
-  import SharePopUp from './FilesFoldersOptions/SharePopUp.vue'
+import UserFunc from '@/utils/UserFunc'
+import RenamePopUpVue from '@/components/FilesFoldersComponents/RenamePopUp.vue'
+import ConfirmDeletePopupVue from '@/components/FilesFoldersComponents/ConfirmDeletePopup.vue'
+import SharePopUp from '@/components/FilesFoldersComponents/SharePopUp.vue'
 import FoldersFunc from '@/utils/FoldersFunc'
+import ShareFoldersPopup from '../FilesFoldersComponents/ShareFoldersPopup.vue'
 import { TypeFile, TypeFolder } from '@/utils/UtilsFunc'
+
 export default{
   components: {
     RenamePopUpVue,
     ConfirmDeletePopupVue,
-    SharePopUp
+    SharePopUp,
+    ShareFoldersPopup
   },
   data(){
     return{
@@ -106,25 +112,25 @@ export default{
 
   },methods:{
     async getContents(){
-    if(this.$route.params.id){
-        let content = await FoldersFunc.GetContentInDirectory(parseInt(this.$route.params.id as string))
-        if(content){
-          this.files = content.files
-          this.folders = content.folder
-          this.originalfiles = this.files
-          this.originalfolders = this.folders
-          console.log(this.folders)
-        }
+      if(this.$route.params.id){
+          let content = await FoldersFunc.GetContentInDirectory(parseInt(this.$route.params.id as string))
+          if(content){
+            this.files = content.files
+            this.folders = content.folder
+            this.originalfiles = this.files
+            this.originalfolders = this.folders
+            console.log(this.folders)
+          }
       }else{
-        let content = await FoldersFunc.GetMainFolder()
-        if(content){
-          this.folders = content
+          let content = await FoldersFunc.GetMainFolder()
+          if(content){
+            this.folders = content.folder
 
-          this.files = [] as TypeFile[]
-          this.originalfiles = this.files
-          this.originalfolders = this.folders
+            this.files = [] as TypeFile[]
+            this.originalfiles = this.files
+            this.originalfolders = this.folders
 
-        }
+          }
       }
     },
     async downloadFiles(idFichier:number, nomFichierOriginal:string) {

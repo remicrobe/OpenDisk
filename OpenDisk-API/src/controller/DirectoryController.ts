@@ -1,19 +1,148 @@
 import { AppDataSource } from "../data-source";
 import { Directory } from "../entity/Directory";
+import { SharedFolders } from "../entity/SharedFolders";
+import { Utilisateur } from "../entity/User";
 import { FileController } from "./FileController";
 import { UserController } from "./UserController";
 
 
 export class DirectoryController{
+    static async GetSharedFolders(token) {
+        const UserID = await UserController.GetUserFromToken(token)
+        if(!UserID) return null
+        delete UserID.dateCreation // POURQUOI ???? CAR SI JE NE FAIS PAS CA TYPEORM NE MARCHE PAS
+        const sharedFoldersExist = await AppDataSource.getRepository(SharedFolders).find({
+            relations:{
+                directory:true,
+                sharedUsers: true
+            },
+            where:{
+                sharedUsers:UserID
+            } 
+        }) 
+    
 
-    static async DirectoryOwner(UserID,DirectoryID){
-        const myDirectory = await AppDataSource.getRepository(Directory).createQueryBuilder("directory").where("directory.ownerID = :ownerID and idDirectory = :DirectoryID", { ownerID:UserID,DirectoryID:DirectoryID }).getOne();
-      
-        if(myDirectory){
-            return myDirectory
-        }else{
+        if(!sharedFoldersExist) return []
+        let sharedfolder= []
+        sharedFoldersExist.forEach((s)=>sharedfolder.push(s.directory))
+        return sharedfolder
+        
+    }
+
+    static async ShareFoldersDetails(idfolder, usertoken) {
+        try {
+            const requestFrom = await UserController.GetUserFromToken(usertoken)
+            if(!requestFrom) return false
+            const directory = await DirectoryController.DirectoryOwner(requestFrom.idUtilisateur,idfolder)
+            if(!directory) return false
+                const sharedFoldersExist = await AppDataSource.getRepository(SharedFolders).findOne({
+                    relations:{
+                        directory:true,
+                        sharedUsers: true
+                    },
+                    where:{
+                        directory: directory,
+                    } 
+                }) 
+                
+                sharedFoldersExist.sharedUsers.forEach(user=> {
+                    delete user.uuid // TODO remplacer tout ces delete par une fonction deleteSensitiveData(user:Utilisateur):Utilisateur
+                    delete user.ActivationCode 
+                    delete user.RecoveryCode
+                    delete user.password
+                    delete user.Activated
+                    delete user.directory
+                    delete user.files
+                    delete user.idUtilisateur
+                    delete user.dateCreation
+                })    
+
+            return sharedFoldersExist.sharedUsers
+        } catch (err) {
             return false
         }
+    }
+    
+    static async ShareFolders(idfolder: number, usertoken: string, usertoshare: string) {
+        try {
+            const requestFrom = await UserController.GetUserFromToken(usertoken)
+            const requestFor = await UserController.GetUserFromMail(usertoshare)
+            const directory = await AppDataSource.getRepository(Directory).findOneBy({idDirectory:idfolder})
+            directory.shared = true;
+            if(!requestFrom || !requestFor) return false
+            if(requestFor.email === requestFrom.email) return false
+            if(await this.DirectoryOwner(requestFrom.idUtilisateur,idfolder) && requestFrom && directory){
+                const sharedFoldersExist = await AppDataSource.getRepository(SharedFolders).findOne({
+                    relations:{
+                        directory:true,
+                        sharedUsers: true
+                    },
+                    where:{
+                        directory: directory,
+                    } 
+                }) 
+                
+                await AppDataSource.getRepository(Directory).save(directory)
+                if(sharedFoldersExist && sharedFoldersExist.sharedUsers.some((user)=> user.email === requestFor.email)){
+                    sharedFoldersExist.sharedUsers = sharedFoldersExist.sharedUsers.filter((user)=> user.email !== requestFor.email)
+                    await AppDataSource.getRepository(SharedFolders).save(sharedFoldersExist)
+                    return true
+                }else if(sharedFoldersExist){
+                    sharedFoldersExist.sharedUsers.push(requestFor)
+                    await AppDataSource.getRepository(SharedFolders).save(sharedFoldersExist)
+                    return true
+                }else{
+                    const newSharedFolders = new SharedFolders
+                    newSharedFolders.directory = directory
+                    newSharedFolders.sharedUsers = [requestFor]
+                    await AppDataSource.getRepository(SharedFolders).save(newSharedFolders)
+                    return true
+                } 
+            }
+            return false
+        } catch (err) {
+            console.log(err)
+            return false
+        }
+    }
+
+    static async DirectoryOwner(UserID,DirectoryID){
+
+
+        const myDirectory = await AppDataSource.getRepository(Directory).findOne({
+            where:{
+                idDirectory:DirectoryID
+            },
+            relations:['ownerID']
+     
+        }) 
+
+
+   
+        const sharedFolders = await AppDataSource.getRepository(SharedFolders).findOne({
+            relations:{
+                directory:true,
+                sharedUsers: true
+            },
+            where:{
+                directory: myDirectory,
+            } 
+        }) 
+        if(sharedFolders){
+            if(sharedFolders.sharedUsers.some((user)=>user.idUtilisateur===UserID)){
+                console.log("Dossier partagé !")
+                return myDirectory
+            }
+        }
+        if(myDirectory){
+            if(myDirectory.ownerID.idUtilisateur === UserID){
+                console.log("Propriétaire du dossier !")
+                return myDirectory
+            }
+        }
+        console.log("rien")
+        return false
+
     }
 
 

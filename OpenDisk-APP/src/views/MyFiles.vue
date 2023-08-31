@@ -13,7 +13,7 @@
   import NavBar from '@/components/NavigationComponents/NavigationBar.vue'
   import OptionsBar from '@/components/NavigationComponents/OptionsBar.vue'
   import HelloPage from '@/components/DisplayComponents/HelloPage.vue'
-  import DisplayFilesFolders from "@/components/DisplayFilesFolders.vue"
+  import DisplayFilesFolders from "@/components/DisplayComponents/DisplayFilesFolders.vue"
 
 
 </script>
