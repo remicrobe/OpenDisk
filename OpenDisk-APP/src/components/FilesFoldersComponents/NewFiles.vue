@@ -18,7 +18,8 @@
 
 <script lang="ts">
 
-  import UserUtils from '@/utils/UserFunc'
+
+import FilesFunc from '@/utils/FilesFunc';
 export default {
 
   data() {
@@ -45,7 +46,7 @@ export default {
       this.showPopup = false;
     },async importer(){
       if(this.selectedFile){
-        let result = await UserUtils.UploadFiles(parseInt(this.$route.params.id as string), this.selectedFile[0])
+        let result = await FilesFunc.UploadFiles(parseInt(this.$route.params.id as string), this.selectedFile[0])
         if(result){
           this.$emit('reload-parent');
           this.info = "Votre fichier a bien été importé !"

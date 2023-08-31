@@ -80,10 +80,12 @@
 
 
 <script lang="ts">
-  import UserUtils,{TypeFile,TypeFolder} from '@/utils/UserFunc'
+  import UserFunc from '@/utils/UserFunc'
   import RenamePopUpVue from './FilesFoldersOptions/RenamePopUp.vue'
   import ConfirmDeletePopupVue from './FilesFoldersOptions/ConfirmDeletePopup.vue'
   import SharePopUp from './FilesFoldersOptions/SharePopUp.vue'
+import FoldersFunc from '@/utils/FoldersFunc'
+import { TypeFile, TypeFolder } from '@/utils/UtilsFunc'
 export default{
   components: {
     RenamePopUpVue,
@@ -105,7 +107,7 @@ export default{
   },methods:{
     async getContents(){
     if(this.$route.params.id){
-        let content = await UserUtils.GetContentInDirectory(parseInt(this.$route.params.id as string))
+        let content = await FoldersFunc.GetContentInDirectory(parseInt(this.$route.params.id as string))
         if(content){
           this.files = content.files
           this.folders = content.folder
@@ -114,7 +116,7 @@ export default{
           console.log(this.folders)
         }
       }else{
-        let content = await UserUtils.GetMainFolder()
+        let content = await FoldersFunc.GetMainFolder()
         if(content){
           this.folders = content
 
@@ -130,7 +132,7 @@ export default{
         const fileId = idFichier;
         const fileName = nomFichierOriginal;
         const authToken:string = sessionStorage.getItem('monToken') || "0";
-        const redirectUrl = `${UserUtils.API_URL}/Files/GetFile/${fileId}/${fileName}`;
+        const redirectUrl = `${UserFunc.API_URL}/Files/GetFile/${fileId}/${fileName}`;
 
         const response = await fetch(redirectUrl, {
             method: 'GET',

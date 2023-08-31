@@ -21,7 +21,8 @@
 
 <script lang="ts">
 
-  import UserUtils from '@/utils/UserFunc'
+import FoldersFunc from '@/utils/FoldersFunc';
+import FilesFunc from '@/utils/FilesFunc';
 export default {
 
   data() {
@@ -59,7 +60,7 @@ export default {
     async rename(){
       if(this.type && this.idtoedit && this.nametoedit && this.newname){
         if(this.type === 'fichier'){
-          let renameFile = await UserUtils.RenameFile(this.idtoedit, this.newname)
+          let renameFile = await FilesFunc.RenameFile(this.idtoedit, this.newname)
           if(renameFile){
             this.popuptype = "success"
             this.error = "Votre fichier a bien été renommé"
@@ -68,7 +69,7 @@ export default {
             this.error = "Une erreur est survenue"
           }
         }else if(this.type === 'dossier'){
-          let renameFile = await UserUtils.RenameFolder(this.idtoedit, this.newname)
+          let renameFile = await FoldersFunc.RenameFolder(this.idtoedit, this.newname)
           if(renameFile){
             this.popuptype = "success"
             this.error = "Votre dossier a bien été renommé"

@@ -18,7 +18,8 @@
 
 <script lang="ts">
 
-  import UserUtils from '@/utils/UserFunc'
+
+import FoldersFunc from '@/utils/FoldersFunc';
 export default {
 
   data() {
@@ -45,7 +46,7 @@ export default {
       this.showPopup = false;
     },
     async createFolder(){
-      let FolderCreated = await UserUtils.CreateFolder(parseInt(this.$route.params.id as string),this.folderName)
+      let FolderCreated = await FoldersFunc.CreateFolder(parseInt(this.$route.params.id as string),this.folderName)
       if(FolderCreated){
         this.sucess = "success"
         this.info = "Votre dossier a bien été créé"

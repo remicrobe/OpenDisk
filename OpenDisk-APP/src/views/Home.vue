@@ -5,7 +5,7 @@
 </template>
 
 <script lang="ts" setup>
-  import NewsComponents from '@/components/NewsComponents.vue';
-  import NavBar from '@/components/NavigationBar.vue'
-  import HelloPage from '@/components/HelloPage.vue'
+  import NewsComponents from '@/components/DisplayComponents/NewsComponents.vue';
+  import NavBar from '@/components/NavigationComponents/NavigationBar.vue'
+  import HelloPage from '@/components/DisplayComponents/HelloPage.vue'
 </script>

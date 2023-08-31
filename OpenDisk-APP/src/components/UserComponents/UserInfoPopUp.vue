@@ -19,7 +19,7 @@
 
 <script lang="ts">
 
-  import UserUtils from '@/utils/UserFunc'
+  import UserFunc from '@/utils/UserFunc'
 export default {
 
   data() {
@@ -44,7 +44,7 @@ export default {
   methods: {
     async sauvegarder(){
       if(this.selectedFile){
-        let result = await UserUtils.ChangePDP(this.selectedFile[0])
+        let result = await UserFunc.ChangePDP(this.selectedFile[0])
         if(result){
           this.$emit('reload-parent');
           this.info = "Votre modification a bien été prise en compte"
@@ -56,7 +56,7 @@ export default {
     }
     },
     disconnect(){
-      UserUtils.disconnect()
+      UserFunc.disconnect()
       window.location.reload();
     },
     openPopup() {

@@ -19,8 +19,8 @@
 
 <script lang="ts">
 
-  import UserUtils from '@/utils/UserFunc'
-import { rename } from 'fs';
+
+import FilesFunc from '@/utils/FilesFunc';
 export default {
 
   data() {
@@ -48,7 +48,7 @@ export default {
     },
     async getSharedLink(){
       if(this.idtoshare){
-        let result = await UserUtils.GetSharedLink(this.idtoshare)
+        let result = await FilesFunc.GetSharedLink(this.idtoshare)
         if(result){
           if(result.sucess.sucess){
             return result.sucess.sucess

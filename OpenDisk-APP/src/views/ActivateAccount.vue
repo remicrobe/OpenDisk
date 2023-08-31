@@ -5,7 +5,7 @@
 
 <script lang="ts">
 
-    import HelloPage from '@/components/HelloPage.vue'
+    import HelloPage from '@/components/DisplayComponents/HelloPage.vue'
     import UserUtils from '@/utils/UserFunc'
 
 export default {

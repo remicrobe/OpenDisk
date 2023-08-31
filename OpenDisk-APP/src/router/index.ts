@@ -1,5 +1,5 @@
 // Composables
-import UserUtils from '@/utils/UserFunc';
+
 import { createRouter, createWebHistory } from 'vue-router'
 
 const routes = [

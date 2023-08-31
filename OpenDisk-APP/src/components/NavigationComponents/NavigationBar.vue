@@ -58,10 +58,12 @@
 
 <script lang="ts">
 
-  import UserUtils,{TypeFolder} from '@/utils/UserFunc'
-  import LoginPopUp from '@/components/LoginPopUp.vue'
-  import RegisterPopUp from '@/components/RegisterPopUp.vue'
-  import UserInfoPopUp from '@/components/UserInfoPopUp.vue'
+  import LoginPopUp from '@/components/UserComponents/LoginPopUp.vue'
+  import RegisterPopUp from '@/components/UserComponents/RegisterPopUp.vue'
+  import UserInfoPopUp from '@/components/UserComponents/UserInfoPopUp.vue'
+import { TypeFolder } from '@/utils/UtilsFunc';
+import UserFunc from '@/utils/UserFunc';
+import FoldersFunc from '@/utils/FoldersFunc';
 
 
 
@@ -89,13 +91,13 @@ export default{
   },
   methods: {
     async reload(){
-    let userinfo = await UserUtils.CheckUserInfo()
+    let userinfo = await UserFunc.CheckUserInfo()
       if(userinfo){
         this.login = true
         userinfo = JSON.parse(userinfo)
         this.email = userinfo.email
-        this.profilpic = UserUtils.API_URL +"/profilpicture/" + userinfo.profilepic
-        let userfolder = await UserUtils.GetMainFolder()
+        this.profilpic = UserFunc.API_URL +"/profilpicture/" + userinfo.profilepic
+        let userfolder = await FoldersFunc.GetMainFolder()
         this.folders=userfolder
         console.log('reload file')
     }
@@ -108,7 +110,7 @@ export default{
       this.showMenu = true;
     },
   async deletefolder(){
-    let deletedfolder = await UserUtils.DeleteFolder(this.foldertodelete)
+    let deletedfolder = await FoldersFunc.DeleteFolder(this.foldertodelete)
     console.log(this.folders)
     if(deletedfolder){
       this.$router.push('/')
@@ -124,13 +126,13 @@ export default{
   }
   },
   async created() {
-    let userinfo = await UserUtils.CheckUserInfo()
+    let userinfo = await UserFunc.CheckUserInfo()
     if(userinfo){
       this.login = true
       userinfo = JSON.parse(userinfo)
       this.email = userinfo.email
-      this.profilpic = UserUtils.API_URL + "/profilpicture/" + userinfo.profilepic
-      let userfolder = await UserUtils.GetMainFolder()
+      this.profilpic = UserFunc.API_URL + "/profilpicture/" + userinfo.profilepic
+      let userfolder = await FoldersFunc.GetMainFolder()
       this.folders=userfolder
       console.log(this.folders)
     }else{

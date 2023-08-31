@@ -22,7 +22,7 @@
 
 <script lang="ts">
 
-  import UserUtils from '@/utils/UserFunc'
+import UserFunc from '@/utils/UserFunc';
 export default {
 
   data() {
@@ -57,7 +57,7 @@ export default {
     },
     async setNewPassword(){
       this.loading = true
-      let Response = await UserUtils.RecoverPassword(this.$route.params.recoverycode as string,this.confirmpassword)
+      let Response = await UserFunc.RecoverPassword(this.$route.params.recoverycode as string,this.confirmpassword)
       console.log(Response)
       if(Response.sucess){
         this.popuptype = "success"

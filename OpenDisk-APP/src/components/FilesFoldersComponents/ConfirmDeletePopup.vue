@@ -17,7 +17,8 @@
 </template>
 
 <script lang="ts">
-import UserUtils from '@/utils/UserFunc';
+import FoldersFunc from '@/utils/FoldersFunc';
+import FilesFunc from '@/utils/FilesFunc';
 
 export default {
 
@@ -56,7 +57,7 @@ export default {
     async rename(){
       if(this.type && this.idtoedit && this.nametoedit){
         if(this.type === 'fichier'){
-          let renameFile = await UserUtils.DeleteFile(this.idtoedit)
+          let renameFile = await FilesFunc.DeleteFile(this.idtoedit)
           if(renameFile){
             this.popuptype = "success"
             this.error = "Votre fichier a bien été supprimé"
@@ -65,7 +66,7 @@ export default {
             this.error = "Une erreur est survenue"
           }
         }else if(this.type === 'dossier'){
-          let renameFile = await UserUtils.DeleteFolder(this.idtoedit)
+          let renameFile = await FoldersFunc.DeleteFolder(this.idtoedit)
           if(renameFile){
             this.popuptype = "success"
             this.error = "Votre dossier a bien été supprimé"

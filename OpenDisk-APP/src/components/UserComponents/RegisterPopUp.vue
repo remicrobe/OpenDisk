@@ -1,20 +1,20 @@
 <template>
   <v-dialog v-model="showPopup" max-width="500px">
     <v-card>
-      <v-card-title class="headline">Se connecter</v-card-title>
+      <v-card-title class="headline">S'inscrire</v-card-title>
       <v-card-text>
         <v-alert v-if="error" :text="error" :type="popuptype"></v-alert>
         <v-divider></v-divider>
         <v-divider></v-divider>
         <v-divider></v-divider>
-        <v-form @submit.prevent :fast-fail=true>
+        <v-form @submit.prevent>
           <v-text-field label="E-mail" :loading="loading" :rules="emailRules" v-model="mail" variant="outlined" required></v-text-field>
           <v-text-field label="Mot de passe" :rules="notBlank" :loading="loading" v-model="password" type="password" variant="outlined" required></v-text-field>
-          <v-btn type="submit" :loading="loading" block class="mt-2" @click="login">Se connecter</v-btn>
+          <v-text-field label="Confirmation du mot de passe" :rules="confirmPWD" :loading="loading" v-model="confirmpassword" type="password" variant="outlined" required></v-text-field>
+          <v-btn type="submit" :disabled="!validButton" :loading="loading" block class="mt-2" @click="register">S'inscrire</v-btn>
       </v-form>
       </v-card-text>
       <v-card-actions>
-        <v-btn color="primary" @click="RecoveryLink">Mot de passe oublié</v-btn>
         <v-btn color="primary" @click="closePopup">Fermer</v-btn>
       </v-card-actions>
     </v-card>
@@ -23,7 +23,7 @@
 
 <script lang="ts">
 
-  import UserUtils from '@/utils/UserFunc'
+  import UserFunc from '@/utils/UserFunc'
 export default {
 
   data() {
@@ -33,12 +33,21 @@ export default {
       mail: '',
       error: '',
       password: '',
-      popuptype:  'error' as 'success' | 'error',
+      confirmpassword: '',
+      popuptype: 'success' as 'success' | 'error',
+      validButton: true,
       notBlank: [
-      (value:string) => {
+        (value:string) => {
           if (value) return true
 
           return 'Veuillez entrer votre mot de passe.'
+        },
+      ],
+      confirmPWD: [
+        (value:string) => {
+
+          if (value && value === this.password as unknown as string) return true
+            return 'Votre mot de passe ne correspond pas.'
         },
       ],
       emailRules: [
@@ -62,14 +71,14 @@ export default {
     closePopup() {
       this.showPopup = false;
     },
-    async login(){
+    async register(){
       this.loading = true
       console.log(this.mail)
-      let Userinfo = await UserUtils.Login(this.mail,this.password)
+      let Userinfo = await UserFunc.Register(this.mail,this.password)
       if(Userinfo.sucess){
         this.popuptype = "success"
-        this.error = "Vos informations de connexions sont correct !"
-        window.location.reload();
+        this.error = Userinfo.sucess.sucess
+
       }else if(Userinfo.erreur){
         console.log(Userinfo.erreur)
         this.error = Userinfo.erreur.erreur
@@ -79,28 +88,8 @@ export default {
       }
       this.loading = false;
 
-    },
-    async RecoveryLink(){
-      if(this.mail){
-        this.loading = true
-        let Recovery = await UserUtils.RecoveryLink(this.mail)
-        if(Recovery.sucess){
-          this.popuptype = "success"
-          this.error = Recovery.sucess.sucess
-          this.loading = false
-        }else if(Recovery.erreur){
-          this.popuptype = "error"
-          this.error = Recovery.erreur.erreur
-          this.loading = false
-        }
-      }else{
-        this.popuptype = "error"
-          this.error = "Veuillez entrer un mail"
-
-      }
     }
-  },
-  watch: {
+  },  watch: {
     'error'(newValue){
       setTimeout(()=>{
         this.error = ''

@@ -10,9 +10,9 @@
 </template>
 
 <script setup lang="ts">
-  import NavBar from '@/components/NavigationBar.vue'
-  import OptionsBar from '@/components/OptionsBar.vue'
-  import HelloPage from '@/components/HelloPage.vue'
+  import NavBar from '@/components/NavigationComponents/NavigationBar.vue'
+  import OptionsBar from '@/components/NavigationComponents/OptionsBar.vue'
+  import HelloPage from '@/components/DisplayComponents/HelloPage.vue'
   import DisplayFilesFolders from "@/components/DisplayFilesFolders.vue"
 
 
