@@ -79,10 +79,15 @@ export class FileController{
       if(!UserID) return null
 
       const myDirectory = await DirectoryController.DirectoryOwner(UserID,folderID)
-      if(!myDirectory) return null
-      
+      const sharedDirectory = await DirectoryController.FolderShared(UserID,folderID)
+      let myFiles
+      if(myDirectory) 
+        myFiles = await AppDataSource.getRepository(File).findBy({directory:myDirectory, ownerID:UserID})
+      else if(sharedDirectory)
+        myFiles = await AppDataSource.getRepository(File).findBy({directory:sharedDirectory, ownerID:UserID})
+      else 
+        return false
 
-      const myFiles = await AppDataSource.getRepository(File).findBy({directory:myDirectory, ownerID:UserID})
       
       if(!myFiles) return false
       
@@ -101,8 +106,9 @@ export class FileController{
       const UserID = await UserController.GetUseriDFromToken(token)
       if(!UserID) return null
 
+      if(await !DirectoryController.DirectoryOwner(UserID,folderID)) return false
 
-      const myDirectory = await AppDataSource.getRepository(Directory).createQueryBuilder("directory").where("directory.ownerID = :ownerID and SubDirectoryID = :folderID", { ownerID:UserID,folderID:folderID }).getMany();
+      const myDirectory = await AppDataSource.getRepository(Directory).createQueryBuilder("directory").where("SubDirectoryID = :folderID", { folderID:folderID }).getMany();
       if(!myDirectory) return null
       return myDirectory
       

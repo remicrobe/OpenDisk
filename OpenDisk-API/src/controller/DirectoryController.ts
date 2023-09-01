@@ -2,6 +2,7 @@ import { AppDataSource } from "../data-source";
 import { Directory } from "../entity/Directory";
 import { SharedFolders } from "../entity/SharedFolders";
 import { Utilisateur } from "../entity/User";
+import { sendInfoMail } from "../mail-tools";
 import { FileController } from "./FileController";
 import { UserController } from "./UserController";
 
@@ -86,16 +87,23 @@ export class DirectoryController{
                 if(sharedFoldersExist && sharedFoldersExist.sharedUsers.some((user)=> user.email === requestFor.email)){
                     sharedFoldersExist.sharedUsers = sharedFoldersExist.sharedUsers.filter((user)=> user.email !== requestFor.email)
                     await AppDataSource.getRepository(SharedFolders).save(sharedFoldersExist)
+                    await sendInfoMail(requestFor.email,requestFor.email,`Vous n'avez plus le droit a collaborer sur le dossier ${directory.DirectoryName} de ${requestFrom.email}`)
+                    if(sharedFoldersExist.sharedUsers.length === 0){
+                        directory.shared = false;
+                        await AppDataSource.getRepository(Directory).save(directory)
+                    }
                     return true
                 }else if(sharedFoldersExist){
                     sharedFoldersExist.sharedUsers.push(requestFor)
                     await AppDataSource.getRepository(SharedFolders).save(sharedFoldersExist)
+                    await sendInfoMail(requestFor.email,requestFor.email,`Vous avez été invité a collaborer sur le dossier ${directory.DirectoryName} de ${requestFrom.email}`)
                     return true
                 }else{
                     const newSharedFolders = new SharedFolders
                     newSharedFolders.directory = directory
                     newSharedFolders.sharedUsers = [requestFor]
                     await AppDataSource.getRepository(SharedFolders).save(newSharedFolders)
+                    await sendInfoMail(requestFor.email,requestFor.email,`Vous avez été invité a collaborer sur le dossier ${directory.DirectoryName} de ${requestFrom.email}`)
                     return true
                 } 
             }
@@ -106,9 +114,7 @@ export class DirectoryController{
         }
     }
 
-    static async DirectoryOwner(UserID,DirectoryID){
-
-
+    static async FolderShared(UserID,DirectoryID){
         const myDirectory = await AppDataSource.getRepository(Directory).findOne({
             where:{
                 idDirectory:DirectoryID
@@ -128,19 +134,34 @@ export class DirectoryController{
                 directory: myDirectory,
             } 
         }) 
+        
         if(sharedFolders){
             if(sharedFolders.sharedUsers.some((user)=>user.idUtilisateur===UserID)){
                 console.log("Dossier partagé !")
                 return myDirectory
             }
         }
+        return false
+    }
+
+    static async DirectoryOwner(UserID,DirectoryID){
+
+
+        const myDirectory = await AppDataSource.getRepository(Directory).findOne({
+            where:{
+                idDirectory:DirectoryID
+            },
+            relations:['ownerID']
+     
+        }) 
+       
         if(myDirectory){
             if(myDirectory.ownerID.idUtilisateur === UserID){
-                console.log("Propriétaire du dossier !")
+                
                 return myDirectory
             }
         }
-        console.log("rien")
+
         return false
 
     }
@@ -200,8 +221,10 @@ export class DirectoryController{
                 
                 return false; // Invalid user ID
             } 
-       
-            if (await !this.DirectoryOwner(userId, directory.idDirectory)) {
+           
+            let DirectoryOwner = await this.DirectoryOwner(userId, directory.idDirectory)
+            console.log(DirectoryOwner)
+            if (!DirectoryOwner) {
                
                 return false; // User is not the owner of the directory
             }

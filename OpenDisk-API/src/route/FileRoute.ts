@@ -81,30 +81,35 @@ FileRoute.post('/UploadProfilPic', async (req,res) => {
 })
 
 
-FileRoute.post('/NewDirectory', async (req,res) => {
-
-    if(req.body.token && req.body.FolderName){
-        let userid = await UserController.GetUserFromToken(req.body.token)
-        if(!userid){
+FileRoute.post('/NewDirectory', async (req,res) => { // TODO, refaire cette fonction anarchique
+    const { token, FolderName, subdirectoryID } = req.body;
+    if(token && FolderName){
+        let user = await UserController.GetUserFromToken(token)
+        if(!user){
             res.status(500).send(erreur("Token invalide"))
-        }else{
+        }else{         
             let myDirectory = new Directory
-            myDirectory.DirectoryName = req.body.FolderName
-            myDirectory.ownerID = userid
-
-            if(req.body.subdirectoryID)
-                if(!isNaN(parseInt(req.body.subdirectoryID )))
-                    myDirectory.SubDirectoryID = req.body.subdirectoryID 
-            
-
-            AppDataSource.getRepository(Directory).save(myDirectory)
-            res.send("Dossier créé !")
+            myDirectory.DirectoryName = FolderName
+            myDirectory.ownerID = user
+            if(subdirectoryID){
+                if(!isNaN(parseInt(subdirectoryID ))){
+                    let DirectoryOwner = await DirectoryController.DirectoryOwner(user.idUtilisateur,subdirectoryID)
+                    if(!DirectoryOwner){
+                        res.status(500).send(erreur("Vous n'avez pas la permission de faire cela"))
+                    }else{
+                        myDirectory.SubDirectoryID = subdirectoryID 
+                        AppDataSource.getRepository(Directory).save(myDirectory)
+                        res.send("Dossier créé !")
+                    }
+                }
+            }else{
+                AppDataSource.getRepository(Directory).save(myDirectory)
+                res.send("Dossier créé !")
+            }
         }
     }else{
         res.status(500).send(erreur("Veuillez respecter les parametres"))
     }
-    
-
 })
 
 

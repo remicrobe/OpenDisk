@@ -55,6 +55,25 @@ export async function sendActivationMail(activationcode, mail, name) {
     });
   }
 
+  export async function sendInfoMail(mail, name, content) {
+    return new Promise((resolve, reject) => {
+      const mailOptions = {
+        from: 'finaltraining@remi-weil.fr',
+        to: mail,
+        subject: 'Information mail',
+        text: `Welcome ${name} to OpenDisk. ${content}`,
+      };
+  
+      transporter.sendMail(mailOptions, (error, info) => {
+        if (error) {
+          reject(error); // Reject with the error
+        } else {
+          resolve(info); // Resolve with the success info
+        }
+      });
+    });
+  }
+
   export async function sendMailError(error,activityID) {
     return new Promise((resolve, reject) => {
       const mailOptions = {
